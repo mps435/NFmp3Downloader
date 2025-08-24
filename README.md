@@ -1,6 +1,6 @@
 # NFmp3Downloader
 
-A simple desktop application for downloading YouTube videos as MP3 or MP4 files, built with Java and a web UI.
+A simple desktop application for downloading YouTube videos as MP3 or MP4 files, built on the powerful **yt-dlp** command-line tool. The app is developed in Java with a local web UI.
 
 This project is specifically designed with features to ensure smooth operation for **NetFree** users.
 
@@ -72,6 +72,8 @@ If you want to build the project yourself, follow these steps.
 
 ## Acknowledgements
 
+- The core download functionality is powered by the excellent [yt-dlp](https://github.com/yt-dlp/yt-dlp) project.
+- [FFmpeg](https://ffmpeg.org/) is used for audio extraction and format processing.
 - The application icon (`icon.ico`) was created with the assistance of OpenAI's GPT model.
 
 ---

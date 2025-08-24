@@ -1,0 +1,45 @@
+<configuration>
+
+    <property name="LOG_FILE" value="${appdata.log.file:-./NFmp3Downloader.log}" />
+
+    <!-- Appender לקונסולה (נשאר זהה) -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 
+      החלפנו את ה-FileAppender הפשוט ב-RollingFileAppender 
+    -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+
+        <!-- מדיניות הסבב: מה גורם לקובץ להתחלף ואיך קוראים לקבצים הישנים -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <!-- 
+              תבנית השם של קבצי הארכיון. %i הוא מונה.
+              הסיומת .zip תגרום ל-Logback לדחוס אוטומטית את קבצי הלוג הישנים!
+            -->
+            <fileNamePattern>${LOG_FILE}.%i.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex> <!-- שמור עד 3 קבצי ארכיון (app.1.log, app.2.log, app.3.log) -->
+        </rollingPolicy>
+
+        <!-- טריגר הסבב: מה מפעיל את מדיניות הסבב -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>500KB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- הגדרת ברירת המחדל: שלח לוגים גם לקונסולה וגם לקובץ -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>

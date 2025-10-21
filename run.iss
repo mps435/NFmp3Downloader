@@ -3,11 +3,11 @@
 
 [Setup]
 AppName=NFmp3Downloader
-AppVersion=1.0.0
+AppVersion=2.0.0
 AppPublisher=mps
 DefaultDirName={code:GetDefaultDir}
 DefaultGroupName=NFdownload
-OutputBaseFilename=nfmp3downloader-setup-1.0.0
+OutputBaseFilename=nfmp3downloader-setup-2.0.0
 PrivilegesRequired=admin
 Compression=lzma
 SolidCompression=yes

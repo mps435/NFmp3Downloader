@@ -62,7 +62,7 @@ If you want to build the project yourself, follow these steps.
 4.  **Create the Self-Contained Application Image:**
     Use `jpackage` to bundle the JAR with a minimal Java runtime. This creates a directory (`release\NFmp3Downloader`) containing an `.exe` and all necessary files, making the application independent of any installed Java on the user's machine. Run the following command from the project's root directory:
     ```bash
-    jpackage --type app-image --dest release --input target --name NFmp3Downloader --main-class com.mps.App --main-jar NFmp3Downloader-1.0-SNAPSHOT.jar --java-options "-Dfile.encoding=UTF-8" --icon src/main/resources/icon.ico --app-version 1.0.0 --vendor "mps" --copyright "Copyright (c) 2025 mps"
+    jpackage --type app-image --dest release --input target --name NFmp3Downloader --main-class com.mps.App --main-jar NFmp3Downloader-1.0-SNAPSHOT.jar --java-options "-Dfile.encoding=UTF-8" --icon src/main/resources/icon.ico --app-version 2.0.0 --vendor "mps" --copyright "Copyright (c) 2025 mps"
     ```
 
 5.  **(Optional) Build the Windows Installer:**

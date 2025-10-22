@@ -76,6 +76,7 @@ public class App {
                     JsonNode jsonNode = objectMapper.readTree(message);
                     String type = jsonNode.get("type").asText();
                     String destinationPath = jsonNode.has("destinationPath") ? jsonNode.get("destinationPath").asText(null) : null;
+                    boolean isNetfree = jsonNode.has("isNetfreeUser") && jsonNode.get("isNetfreeUser").asBoolean(false);
                     
                     if ("select_destination".equals(type)) {
                         logger.info("Client requested to select a destination folder.");
@@ -88,21 +89,21 @@ public class App {
                     } else if ("download_queue".equals(type)) {
                         List<String> urls = objectMapper.convertValue(jsonNode.get("urls"), new TypeReference<List<String>>() {});
                         String formatId = jsonNode.has("formatId") ? jsonNode.get("formatId").asText(null) : null;
-                        logger.info("Received download queue request with {} URLs, formatId: {}, destination: {}", urls.size(), formatId, destinationPath);
-                        DownloadService.startDownloadQueue(urls, formatId, destinationPath, ctx.session);
+                        logger.info("Received download queue request with {} URLs, formatId: {}, destination: {}, isNetfree: {}", urls.size(), formatId, destinationPath, isNetfree);
+                        DownloadService.startDownloadQueue(urls, formatId, destinationPath, isNetfree, ctx.session);
 
                     } else if ("download".equals(type)) { 
                         String youtubeUrl = jsonNode.get("url").asText();
                         boolean isPlaylist = jsonNode.has("playlist") && jsonNode.get("playlist").asBoolean();
-                        logger.info("Received MP3 download request for URL: {}, isPlaylist: {}, destination: {}", youtubeUrl, isPlaylist, destinationPath);
-                        DownloadService.startDownload(youtubeUrl, isPlaylist, null, destinationPath, ctx.session);
+                        logger.info("Received MP3 download request for URL: {}, isPlaylist: {}, destination: {}, isNetfree: {}", youtubeUrl, isPlaylist, destinationPath, isNetfree);
+                        DownloadService.startDownload(youtubeUrl, isPlaylist, null, destinationPath, isNetfree, ctx.session);
 
                     } else if ("download_video".equals(type)) {
                         String youtubeUrl = jsonNode.get("url").asText();
                         String formatId = jsonNode.get("formatId").asText();
                         boolean isPlaylist = jsonNode.has("playlist") && jsonNode.get("playlist").asBoolean();
-                        logger.info("Received video download request for URL: {}, formatId: {}, isPlaylist: {}, destination: {}", youtubeUrl, formatId, isPlaylist, destinationPath);
-                        DownloadService.startDownload(youtubeUrl, isPlaylist, formatId, destinationPath, ctx.session);
+                        logger.info("Received video download request for URL: {}, formatId: {}, isPlaylist: {}, destination: {}, isNetfree: {}", youtubeUrl, formatId, isPlaylist, destinationPath, isNetfree);
+                        DownloadService.startDownload(youtubeUrl, isPlaylist, formatId, destinationPath, isNetfree, ctx.session);
 
                     } else if ("open_log".equals(type)) {
                         logger.info("Client requested to open log file.");
@@ -117,14 +118,17 @@ public class App {
                 logger.info("WebSocket client disconnected: {} - Reason: {}", ctx.getSessionId(), ctx.reason());
                 activeSessions.remove(ctx.getSessionId());
                 if (activeSessions.isEmpty()) {
-                    logger.info("Last client disconnected. Shutting down server...");
+                    logger.info("Last client disconnected. Attempting graceful shutdown...");
                     new Thread(() -> {
                         try {
-                            Thread.sleep(1500);
+                            Thread.sleep(2000); 
                             if (activeSessions.isEmpty()) {
+                                logger.info("No new clients. Shutting down server.");
                                 app.stop();
-                                logger.info("Server stopped. Exiting.");
+                                logger.info("Server stopped. Exiting application.");
                                 System.exit(0);
+                            } else {
+                                logger.info("A new client reconnected. Aborting shutdown.");
                             }
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
@@ -146,7 +150,6 @@ public class App {
         }
     }
     
-
     private static void handleSelectDestination(Session session) {
         SwingUtilities.invokeLater(() -> {
             final JFrame parent = new JFrame();
@@ -180,7 +183,7 @@ public class App {
     
     private static void sendMessage(Session session, DownloadMessage message) {
         try {
-            if (session.isOpen()) {
+            if (session != null && session.isOpen()) {
                 String jsonMessage = objectMapper.writeValueAsString(message);
                 session.getRemote().sendString(jsonMessage);
             }
@@ -193,24 +196,32 @@ public class App {
         String[] binaries = {"yt-dlp.exe", "ffmpeg.exe"};
         try {
             Path binDir = PathUtils.getBinDirectory();
-            if (!Files.exists(binDir)) { Files.createDirectories(binDir); }
+            if (!Files.exists(binDir)) { 
+                Files.createDirectories(binDir); 
+            }
             for (String binaryName : binaries) {
                 Path targetPath = binDir.resolve(binaryName);
                 if (!Files.exists(targetPath)) {
                     logger.info("Binary '{}' not found in AppData. Copying from resources...", binaryName);
                     try (InputStream source = App.class.getResourceAsStream("/bin/" + binaryName)) {
-                        if (source == null) throw new IOException("Binary file not found in resources: /bin/" + binaryName);
+                        if (source == null) {
+                            throw new IOException("Binary file not found in resources: /bin/" + binaryName);
+                        }
                         Files.copy(source, targetPath, StandardCopyOption.REPLACE_EXISTING);
                         logger.info("Successfully copied '{}' to {}", binaryName, targetPath);
                     }
                 }
             }
         } catch (IOException e) {
-            if (logger != null) logger.error("CRITICAL: Failed to set up binary files.", e);
-            else e.printStackTrace();
+            System.err.println("CRITICAL: Failed to set up binary files. " + e.getMessage());
+            e.printStackTrace();
+            if (logger != null) {
+                logger.error("CRITICAL: Failed to set up binary files.", e);
+            }
             System.exit(1);
         }
     }
+
     private static void setupLogging() {
         try {
             Path appDataPath = PathUtils.getAppDataDirectory();
@@ -223,7 +234,9 @@ public class App {
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(context);
             try (InputStream configStream = App.class.getResourceAsStream("/logback.xml")) {
-                if (configStream == null) throw new IOException("Could not find logback.xml in resources.");
+                if (configStream == null) {
+                    throw new IOException("Could not find logback.xml in resources.");
+                }
                 configurator.doConfigure(configStream);
             }
             logger = LoggerFactory.getLogger(App.class);
@@ -235,6 +248,7 @@ public class App {
             logger = LoggerFactory.getLogger(App.class);
         }
     }
+
     private static void launchBrowser() {
         try {
             Path indexPath = PathUtils.getApplicationDirectory().resolve("web").resolve("index.html");
@@ -254,6 +268,7 @@ public class App {
             logger.error("Failed to launch browser.", e);
         }
     }
+    
     private static void openLogFile() {
         try {
             Path logFilePath = Paths.get(System.getProperty("appdata.log.file"));

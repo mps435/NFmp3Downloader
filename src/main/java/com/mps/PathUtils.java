@@ -6,29 +6,42 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PathUtils {
-    
+
     private static final String APP_NAME = "NFmp3Downloader";
+    private static Path applicationDirectory = null;
 
     public static Path getApplicationDirectory() {
+        if (applicationDirectory != null) {
+            return applicationDirectory;
+        }
+
         try {
-            File jarFile = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            if (jarFile.isFile()) {
-                
-                return jarFile.getParentFile().toPath();
+            File jarOrClassPath = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+            String javaHome = System.getProperty("java.home");
+            if (javaHome != null && new File(javaHome).getName().equals("runtime")) {
+                applicationDirectory = Paths.get(javaHome).getParent();
+            } else if (jarOrClassPath.isFile()) {
+                applicationDirectory = jarOrClassPath.getParentFile().toPath();
             } else {
-                
-                return jarFile.toPath().getParent().getParent();
+                applicationDirectory = jarOrClassPath.toPath().getParent().getParent();
             }
         } catch (URISyntaxException e) {
-            
-            throw new IllegalStateException("Could not find application path.", e);
+            throw new IllegalStateException("Could not determine application path.", e);
         }
+        
+        System.out.println("Application Directory resolved to: " + applicationDirectory);
+        return applicationDirectory;
     }
 
     public static Path getAppDataDirectory() {
-        return Paths.get(System.getenv("APPDATA"));
+        String appdata = System.getenv("APPDATA");
+        if (appdata == null || appdata.isEmpty()) {
+            return Paths.get(System.getProperty("user.home"), "AppData", "Roaming");
+        }
+        return Paths.get(appdata);
     }
-    
+
     public static Path getBinDirectory() {
         return getAppDataDirectory().resolve(APP_NAME).resolve("bin");
     }

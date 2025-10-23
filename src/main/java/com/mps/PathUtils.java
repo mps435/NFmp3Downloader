@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PathUtils {
-
+    
     private static final String APP_NAME = "NFmp3Downloader";
     private static Path applicationDirectory = null;
 
@@ -14,17 +14,13 @@ public class PathUtils {
         if (applicationDirectory != null) {
             return applicationDirectory;
         }
-
         try {
-            File jarOrClassPath = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-
-            String javaHome = System.getProperty("java.home");
-            if (javaHome != null && new File(javaHome).getName().equals("runtime")) {
-                applicationDirectory = Paths.get(javaHome).getParent();
-            } else if (jarOrClassPath.isFile()) {
-                applicationDirectory = jarOrClassPath.getParentFile().toPath();
+            File codeSourceFile = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            
+            if (codeSourceFile.isFile()) {
+                applicationDirectory = codeSourceFile.getParentFile().toPath();
             } else {
-                applicationDirectory = jarOrClassPath.toPath().getParent().getParent();
+                applicationDirectory = codeSourceFile.toPath();
             }
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Could not determine application path.", e);
@@ -37,11 +33,11 @@ public class PathUtils {
     public static Path getAppDataDirectory() {
         String appdata = System.getenv("APPDATA");
         if (appdata == null || appdata.isEmpty()) {
-            return Paths.get(System.getProperty("user.home"), "AppData", "Roaming");
+            return Paths.get(System.getProperty("user.home"), ".config");
         }
         return Paths.get(appdata);
     }
-
+    
     public static Path getBinDirectory() {
         return getAppDataDirectory().resolve(APP_NAME).resolve("bin");
     }

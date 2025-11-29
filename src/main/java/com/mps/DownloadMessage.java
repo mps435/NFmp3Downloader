@@ -10,8 +10,8 @@ public class DownloadMessage {
     private String percent;
     private String speed;
     private String error;
-    private String path; 
-    
+    private String path;
+
     private String current;
     private String total;
 
@@ -19,7 +19,10 @@ public class DownloadMessage {
     private Integer failureCount;
     private List<String> successfulFiles;
 
-    
+    private String version;
+    private String releaseNotes;
+    private String downloadUrl;
+
     public DownloadMessage(String type) {
         this.type = type;
     }
@@ -39,7 +42,7 @@ public class DownloadMessage {
         msg.setSpeed(speed);
         return msg;
     }
-    
+
     public static DownloadMessage playlistProgress(String current, String total) {
         DownloadMessage msg = new DownloadMessage("playlist_progress");
         msg.setCurrent(current);
@@ -54,7 +57,7 @@ public class DownloadMessage {
     public static DownloadMessage error(String errorMessage) {
         return new DownloadMessage("error", errorMessage);
     }
-    
+
     public static DownloadMessage updateCheck() {
         return new DownloadMessage("update_check");
     }
@@ -62,7 +65,7 @@ public class DownloadMessage {
     public static DownloadMessage updating() {
         return new DownloadMessage("updating");
     }
-    
+
     public static DownloadMessage processing() {
         return new DownloadMessage("processing");
     }
@@ -70,7 +73,7 @@ public class DownloadMessage {
     public static DownloadMessage merging() {
         return new DownloadMessage("merging");
     }
-    
+
     public static DownloadMessage cancelled() {
         return new DownloadMessage("cancelled");
     }
@@ -88,25 +91,120 @@ public class DownloadMessage {
         msg.setSuccessfulFiles(successfulFiles);
         return msg;
     }
-    
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-    public String getPercent() { return percent; }
-    public void setPercent(String percent) { this.percent = percent; }
-    public String getSpeed() { return speed; }
-    public void setSpeed(String speed) { this.speed = speed; }
-    public String getError() { return error; }
-    public void setError(String error) { this.error = error; }
-    public String getPath() { return path; }
-    public void setPath(String path) { this.path = path; }
-    public String getCurrent() { return current; }
-    public void setCurrent(String current) { this.current = current; }
-    public String getTotal() { return total; }
-    public void setTotal(String total) { this.total = total; }
-    public Integer getSuccessCount() { return successCount; }
-    public void setSuccessCount(Integer successCount) { this.successCount = successCount; }
-    public Integer getFailureCount() { return failureCount; }
-    public void setFailureCount(Integer failureCount) { this.failureCount = failureCount; }
-    public List<String> getSuccessfulFiles() { return successfulFiles; }
-    public void setSuccessfulFiles(List<String> successfulFiles) { this.successfulFiles = successfulFiles; }
+
+    public static DownloadMessage updateAvailable(String version, String releaseNotes, String downloadUrl) {
+        DownloadMessage msg = new DownloadMessage("update_available");
+        msg.setVersion(version);
+        msg.setReleaseNotes(releaseNotes);
+        msg.setDownloadUrl(downloadUrl);
+        return msg;
+    }
+
+    public static DownloadMessage netfreeBlocked() {
+        return new DownloadMessage("netfree_error");
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getPercent() {
+        return percent;
+    }
+
+    public void setPercent(String percent) {
+        this.percent = percent;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(String current) {
+        this.current = current;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
+    public Integer getSuccessCount() {
+        return successCount;
+    }
+
+    public void setSuccessCount(Integer successCount) {
+        this.successCount = successCount;
+    }
+
+    public Integer getFailureCount() {
+        return failureCount;
+    }
+
+    public void setFailureCount(Integer failureCount) {
+        this.failureCount = failureCount;
+    }
+
+    public List<String> getSuccessfulFiles() {
+        return successfulFiles;
+    }
+
+    public void setSuccessfulFiles(List<String> successfulFiles) {
+        this.successfulFiles = successfulFiles;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getReleaseNotes() {
+        return releaseNotes;
+    }
+
+    public void setReleaseNotes(String releaseNotes) {
+        this.releaseNotes = releaseNotes;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
 }

@@ -6,7 +6,7 @@
 
     <groupId>com.mps</groupId>
     <artifactId>NFmp3Downloader</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
 
     <properties>
         <maven.compiler.release>11</maven.compiler.release>
@@ -31,7 +31,21 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.11</version>
         </dependency>
+
+         <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>5.14.0</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna-platform</artifactId>
+        <version>5.14.0</version>
+    </dependency>
+    
     </dependencies>
+    
 
     <build>
         <plugins>

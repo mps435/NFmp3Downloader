@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
 
     <style>
-
         :root {
             --color-red: #ea594d;
             --color-blue: #4d90b3;
@@ -50,11 +49,12 @@
             color: var(--color-cream);
 
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
             min-height: 100vh;
 
-            padding-top: 70px;
+            padding-top: 60px;
             padding-bottom: 20px;
         }
 
@@ -196,20 +196,31 @@
         #app-container {
             width: 100%;
             max-width: 500px;
-            padding: 2rem;
+
+            padding: 1.5rem 2rem 1rem 2rem;
+
             background-color: #2c2c2c;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             border: 2px solid var(--color-dark);
             text-align: center;
+            margin-top: 30px;
+            transition: margin-top 0.5s ease-in-out;
+            position: relative;
         }
+
+        #update-notification.visible+#app-container {
+            margin-top: 0;
+        }
+
 
         header {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 2rem;
+            margin-top: 43px;
+            margin-bottom: 0;
         }
 
         #app-icon {
@@ -219,9 +230,18 @@
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 45px;
             color: var(--color-red);
-            text-shadow: 1px 1px 2px var(--color-dark);
+
+            text-shadow:
+                -1px -1px 0 #fff,
+                1px -1px 0 #fff,
+                -1px 1px 0 #fff,
+                1px 1px 0 #fff,
+                0px 4px 10px rgba(0, 0, 0, 0.5);
+
+            margin: 0;
+            font-weight: 800;
         }
 
         #single-link-section {
@@ -577,7 +597,11 @@
         }
 
         footer {
-            margin-top: 2rem;
+            margin-top: 10px;
+
+            border-top: 1px solid #444;
+            padding-top: 15px;
+
             font-size: 0.9rem;
             color: #aaa;
             text-align: center;
@@ -602,35 +626,512 @@
         #bookmarklet:hover {
             background-color: #d8483b;
         }
+
+        #update-notification {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--color-dark);
+            border: 1px solid var(--color-blue);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--color-cream);
+            overflow: hidden;
+
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-width: 0;
+            transition: all 0.5s ease-in-out;
+        }
+
+        #update-notification.visible {
+            max-height: 200px;
+            opacity: 1;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            border-width: 1px;
+        }
+
+        #update-text {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .update-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .update-btn-main {
+            padding: 6px 16px;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            background-color: var(--color-blue);
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .update-btn-main:hover {
+            filter: brightness(1.15);
+        }
+
+        .update-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            border-top: 1px solid #444;
+            padding-top: 8px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-container label {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        .update-btn-secondary {
+            background-color: transparent;
+            border: 1px solid #666;
+            color: #ccc;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .update-btn-secondary:hover {
+            background-color: #444;
+        }
+
+        #app-container {
+            position: relative;
+        }
+
+        #top-back-btn {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 20;
+            opacity: 0.7;
+            transition: opacity 0.2s, transform 0.2s;
+            color: var(--color-cream);
+        }
+
+        #top-back-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        #top-back-btn svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        #settings-btn {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            height: 42px;
+            width: auto;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            background: rgba(44, 44, 44, 0.9);
+            border: 2px solid var(--color-dark);
+            border-radius: 25px;
+
+            cursor: pointer;
+            z-index: 100;
+            color: var(--color-cream);
+            padding: 0 15px;
+
+            transition: background 0.3s, border-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #settings-btn:hover {
+            background: #383838;
+            border-color: var(--color-blue);
+            transform: scale(1.05);
+        }
+
+        #settings-btn svg {
+            fill: currentColor;
+            width: 20px;
+            height: 20px;
+            transition: transform 0.5s;
+        }
+
+        #settings-btn:hover svg {
+            transform: rotate(90deg);
+        }
+
+        .settings-text {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 0.95rem;
+            font-weight: bold;
+            padding-top: 2px;
+        }
+
+
+        #settings-sidebar {
+            position: fixed;
+            top: 0;
+            left: -350px;
+            width: 320px;
+            height: 100%;
+            background-color: #2c2c2c;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--color-blue);
+        }
+
+        #settings-sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            background-color: #252525;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: var(--color-cream);
+        }
+
+        #close-sidebar-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        #close-sidebar-btn:hover {
+            color: var(--color-red);
+        }
+
+        .sidebar-content {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            height: 100%;
+
+            gap: 20px;
+        }
+
+        .setting-row {
+            background: #333;
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #444;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .setting-row.clickable:hover {
+            border-color: var(--color-blue);
+            background: #383838;
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+
+        .setting-icon-img {
+            width: 24px;
+            height: 24px;
+        }
+
+        #lang-select {
+            background-color: #222;
+            color: var(--color-cream);
+            border: 1px solid #555;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        #sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        #sidebar-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(3px);
+            z-index: 300;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .custom-modal.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: #2c2c2c;
+            border: 2px solid var(--color-blue);
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h3 {
+            color: var(--color-red);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .modal-content p {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+        }
+
+        #bg-color-picker {
+            -webkit-appearance: none;
+            border: none;
+            background: none;
+
+            width: 80px;
+            height: 28px;
+
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+
+        #bg-color-picker::-webkit-color-swatch {
+            border: 1px solid #777;
+            border-radius: 4px;
+        }
+
+        #bg-color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        html[lang="en"] header {
+            flex-direction: row-reverse;
+        }
+
+        html[lang="en"] span[data-i18n="netfree_user"] {
+            font-size: 0.8rem;
+            line-height: 1.1;
+            display: block;
+            max-width: 160px;
+        }
     </style>
 </head>
 
 <body>
 
 
-    <div id="top-controls">
-        <button id="lang-toggle"></button>
-        <div id="destination-section">
-            <button id="select-dest-btn" aria-label="Select download folder"></button>
-            <input type="text" id="destination-path-display" data-i18n-placeholder="destination_placeholder" readonly>
+    <button id="settings-btn" aria-label="Settings">
+        <svg viewBox="0 0 24 24">
+            <path
+                d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.49l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
+        </svg>
+        <span data-i18n="settings_title" class="settings-text">הגדרות</span>
+    </button>
+
+    <div id="settings-sidebar">
+        <div class="sidebar-header">
+            <h2 data-i18n="settings_title">הגדרות</h2>
+            <button id="close-sidebar-btn">✕</button>
         </div>
-        <div id="netfree-control-group">
-            <div class="top-control-button" id="netfree-button">
-                <img src="netfree_ic.svg" alt="NetFree Icon" class="netfree-icon">
+
+        <div class="sidebar-content">
+            <div class="setting-row">
+                <div class="setting-label">
+                    <span class="setting-icon">🌐</span>
+                    <span data-i18n="language_label">שפה</span>
+                </div>
+                <select id="lang-select">
+                    <option value="he">עברית</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+
+            <div class="setting-row clickable" id="dest-folder-row" style="cursor: pointer;">
+                <div style="flex-grow: 1; min-width: 0; margin-inline-end: 10px;">
+                    <div class="setting-label">
+                        <span class="setting-icon">📂</span>
+                        <span data-i18n="dest_folder_label">תיקיית הורדה</span>
+                    </div>
+                    <div id="sidebar-dest-path"
+                        style="font-size: 0.75rem; color: #888; margin-top: 4px; direction: ltr; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <span data-i18n="destination_placeholder"></span>
+                    </div>
+                </div>
+                <span style="font-size: 1rem; color: #ffffff;">ᐳ</span>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-label">
+                    <img src="netfree_ic.svg" alt="NetFree" class="setting-icon-img">
+                    <span data-i18n="netfree_user">מצב תאימות - נטפרי</span>
+                </div>
                 <label class="switch">
                     <input type="checkbox" id="netfree-toggle">
                     <span class="slider"></span>
                 </label>
             </div>
-            <span class="control-label" data-i18n="netfree_user">NetFree User</span>
+
+            <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+
+            <div class="setting-row">
+                <div class="setting-label">
+                    <span class="setting-icon">🎨</span>
+                    <span data-i18n="bg_color_label">צבע רקע</span>
+                </div>
+                <input type="color" id="bg-color-picker" value="#222222">
+            </div>
+
+            <div class="setting-row clickable" id="bg-image-row" style="cursor: pointer;">
+                <div class="setting-label">
+                    <span class="setting-icon">🖼️</span>
+                    <span data-i18n="bg_image_label">תמונת רקע</span>
+                </div>
+                <span style="font-size: 1.2rem;">ᐳ</span>
+            </div>
+
+            <div id="reset-bg-container" style="text-align: center; display: none;">
+                <button id="reset-bg-btn" class="update-btn-secondary" style="font-size: 0.9rem;"
+                    data-i18n="reset_bg_label">אפס רקע לברירת מחדל</button>
+            </div>
+
+            <div style="margin-top: auto; padding-top: 20px; text-align: center; color: #777; font-size: 0.85rem;">
+                <p>
+                    <span data-i18n="credits_rights">© All rights reserved to</span>
+                    <strong>mps</strong>
+                </p>
+                <p style="margin-top: 5px; font-size: 0.8rem;">
+                    <span data-i18n="credits_bugs">Bugs & Feedback:</span>
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mpsm43533@gmail.com" target="_blank"
+                        style="color: #999; text-decoration: none;">mpsm43533@gmail.com </a>
+                </p>
+            </div>
         </div>
     </div>
 
+    <div id="sidebar-overlay"></div>
+    </div>
+    </div>
+
+    <div id="sidebar-overlay"></div>
+    <div id="update-notification" class="hidden">
+        <p id="update-text"></p>
+        <div class="update-buttons">
+            <button id="whats-new-btn" class="update-btn-main" data-i18n="whats_new">מה חדש</button>
+            <a href="https://github.com/mps435/NFmp3Downloader/releases/latest" target="_blank" id="download-update-btn"
+                class="update-btn-main" data-i18n="download">הורד</a>
+        </div>
+        <div class="update-footer">
+            <div class="checkbox-container">
+                <input type="checkbox" id="dont-show-again-checkbox">
+                <label for="dont-show-again-checkbox" data-i18n="dont_show_again">אל תציג הודעה זו שוב</label>
+            </div>
+            <button id="close-update-btn" class="update-btn-secondary" data-i18n="close">סגור</button>
+        </div>
+    </div>
+    <header>
+        <img id="app-icon" alt="App Icon">
+        <h1 data-i18n="title">NFmp3Downloader</h1>
+    </header>
+
     <div id="app-container">
-        <header>
-            <img id="app-icon" alt="App Icon">
-            <h1 data-i18n="title">NFmp3Downloader</h1>
-        </header>
+        <button id="top-back-btn" aria-label="Back">
+            <svg viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+        </button>
+
+
         <main>
             <div id="main-content">
                 <div id="single-link-section">
@@ -741,6 +1242,7 @@
                 </div>
             </div>
         </main>
+
         <footer>
             <p id="bookmark-info" data-i18n="bookmark_info"></p>
             <a id="bookmarklet" href="#" data-i18n="bookmark_title"></a>
@@ -765,7 +1267,7 @@
                 "lang_toggle": "🌐 עברית", "title": "NFmp3Downloader", "connecting": "Connecting to service...", "launching": "Launching the application...",
                 "requesting": "Sending request to server...", "downloading": "Downloading...", "playlist_progress": "Downloading item {current} of {total}",
                 "merging": "Merging video and audio...", "processing": "Processing file... (adding thumbnail & metadata)", "update_check": "Possible error, checking for yt-dlp update...",
-                "updating": "Update found, installing...", "success_message": "The file is in your Downloads folder.", "download_another": "Download another file",
+                "updating": "updating yt-dlp...", "success_message": "The file is in your Downloads folder.", "download_another": "Download another file",
                 "error_message": "The download has failed.", "view_log": "View the log file", "try_again": "Try again", "youtube_placeholder": "https://www.youtube.com/watch?v=",
                 "download_btn_aria": "Download", "quality_best": "Best Quality (MP4)", "quality_1080p": "1080p (MP4)", "quality_720p": "720p (MP4)", "quality_480p": "480p (MP4)",
                 "playlist_confirm_mp3": "Playlist link detected.\n\nClick 'OK' to download the entire list.\nClick 'Cancel' to download only this single track.",
@@ -773,8 +1275,20 @@
                 "invalid_url_alert": "Please enter a valid YouTube link.", "bookmark_info": "To save as a bookmark, drag the following icon to your bookmarks bar.",
                 "bookmark_title": "NFmp3Downloader", "multi_link_instructions": "Paste one YouTube link per line.", "multi_link_placeholder": "https://...\nhttps://...",
                 "multi_download_btn": "Download All (MP3)", "multi_cancel_btn": "Back", "invalid_url_list_alert": "Please enter at least one valid YouTube link.",
-                "netfree_user": "NetFree User",
-                "invalid_url_list_alert": "Please enter at least one valid YouTube link."
+                "netfree_user": "NetFree Compatibility Mode",
+                "invalid_url_list_alert": "Please enter at least one valid YouTube link.", "update_available": "New version available!",
+                "whats_new": "What's New?",
+                "download": "Download",
+                "dont_show_again": "Don't show this message again", "settings_title": "Settings",
+                "language_label": "Language", "netfree_warning_title": "Attention: Compatibility Mode",
+                "netfree_warning_text": "This mode is intended primarily for NetFree users experiencing connection issues (e.g., Bezeq providers).<br><br>If downloads work normally for you, <strong>it is recommended to keep this off</strong> for maximum speed.",
+                "netfree_dont_show": "Don't show this warning again", "credits_rights": "© All rights reserved to",
+                "credits_bugs": "Bugs & Feedback:",
+                "netfree_close_btn": "I understand, close",
+                "netfree_error_msg": "Error: Connection blocked by NetFree (Error 418).",
+                "netfree_try_mode_btn": "Try NetFree Compatibility Mode", "bg_color_label": "Background Color", "bg_image_label": "Background Image", "reset_bg_label": "Reset Background", "dest_folder_label": "Download Folder",
+
+                "close": "Close"
 
             },
             "he": {
@@ -790,19 +1304,46 @@
                 "show_files_btn": "הצג קבצים שהורדו",
                 "downloaded_files_title": "קבצים שהורדו:",
                 "lang_toggle": "🌐 English", "title": "NFmp3Downloader", "connecting": "מתחבר לשירות...", "launching": "מפעיל את התוכנה...", "requesting": "שולח בקשה לשרת...",
-                "downloading": "מוריד...", "playlist_progress": "מוריד פריט {current} מתוך {total}", "merging": "מאחד וידאו ואודיו...", "processing": "מעבד את הקובץ... (מוסיף תמונה ומטא-דאטה)",
-                "update_check": "שגיאה אפשרית, בודק אם יש עדכון ל-yt-dlp...", "updating": "נמצא עדכון, מתקין...", "success_message": "הקובץ נמצא בתיקיית ההורדות.",
+                "downloading": "מוריד...", "playlist_progress": "מוריד פריט {current} מתוך {total}", "merging": "מאחד וידאו ואודיו...", "processing": "מעבד את הקובץ... (ממיר, מוסיף תמונה ומטא-דאטה)",
+                "update_check": "שגיאה אפשרית, בודק אם יש עדכון ל-yt-dlp...", "updating": "מעדכן את yt-dlp...", "success_message": "הקובץ נמצא בתיקיית ההורדות.", "settings_title": "הגדרות",
+                "language_label": "שפה",
                 "download_another": "הורד קובץ נוסף", "error_message": "ההורדה נכשלה.", "view_log": "עיין בקובץ הלוג", "try_again": "נסה שוב", "youtube_placeholder": "https://www.youtube.com/watch?v=",
                 "download_btn_aria": "הורד", "quality_best": "איכות מיטבית (MP4)", "quality_1080p": "1080p (MP4)", "quality_720p": "720p (MP4)", "quality_480p": "480p (MP4)",
                 "playlist_confirm_mp3": "זוהה קישור לפלייליסט.\n\nלחץ 'אישור' (OK) כדי להוריד את כל הרשימה.\nלחץ 'ביטול' (Cancel) כדי להוריד רק את השיר הבודד הזה.",
                 "playlist_confirm_video": "זוהה קישור לפלייליסט.\n\nלחץ 'אישור' (OK) כדי להוריד את כל הרשימה כקבצי וידאו.\nלחץ 'ביטול' (Cancel) כדי להוריד רק את הסרטון הבודד הזה.",
                 "invalid_url_alert": "אנא הזן קישור תקין מיוטיוב.", "bookmark_info": "כדי לשמור כסימניה, ניתן לגרור את האייקון הבא לסרגל הסימניות.",
                 "bookmark_title": "NFmp3Downloader", "multi_link_instructions": "הדבק קישור אחד מיוטיוב בכל שורה.", "multi_link_placeholder": "https://...\nhttps://...",
-                "multi_download_btn": "הורד הכל (MP3)", "multi_cancel_btn": "חזור", "invalid_url_list_alert": "אנא הזן לפחות קישור תקין אחד מיוטיוב.", "netfree_user": "משתמש נטפרי"
+                "multi_download_btn": "הורד הכל (MP3)", "multi_cancel_btn": "חזור", "invalid_url_list_alert": "אנא הזן לפחות קישור תקין אחד מיוטיוב.", "netfree_user": "מצב תאימות - נטפרי", "update_available": "גרסה חדשה זמינה!", "credits_rights": "© כל הזכויות שמורות ל-",
+                "credits_bugs": "למשוב ודיווח על באגים:",
+                "whats_new": "מה חדש?",
+                "download": "הורד",
+                "dont_show_again": "אל תציג הודעה זו שוב", "netfree_warning_title": "שים לב: מצב תאימות",
+                "netfree_warning_text": "מצב זה מיועד בעיקר למשתמשי נטפרי הסובלים מבעיות הורדה (למשל גולשי בזק).<br><br>אם ההורדה עובדת לך כרגיל, <strong>מומלץ להשאיר אפשרות זו כבויה</strong> כדי לקבל מהירות מקסימלית.",
+                "netfree_dont_show": "אל תציג אזהרה זו שוב",
+                "netfree_close_btn": "הבנתי",
+                "netfree_error_msg": "שגיאה: החיבור נחסם ע\"י NetFree (שגיאה 418).",
+                "netfree_try_mode_btn": "נסה להפעיל מצב תאימות-נטפרי", "bg_color_label": "צבע רקע", "bg_image_label": "תמונת רקע", "reset_bg_label": "אפס רקע", "dest_folder_label": "תיקיית הורדה",
+
+                "close": "סגור"
+
 
 
             }
         };
+
+        function parseReleaseNotes(fullNotes, lang) {
+            const notesByLang = {};
+            const regex = /(HE|EN):\s*([\s\S]*?)(?=\s*(?:HE|EN):|$)/g;
+
+            let match;
+            while ((match = regex.exec(fullNotes)) !== null) {
+                notesByLang[match[1]] = match[2].trim();
+            }
+
+            const targetLang = lang.toUpperCase();
+            return notesByLang[targetLang] || fullNotes;
+        }
+
 
         document.addEventListener('DOMContentLoaded', () => {
             let translations = {};
@@ -814,9 +1355,10 @@
 
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
-                    if (translations[key]) el.textContent = translations[key];
-                });
-                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    if (translations[key]) {
+                        el.innerHTML = translations[key];
+                    }
+                }); document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                     const key = el.getAttribute('data-i18n-placeholder');
                     if (translations[key]) el.placeholder = translations[key];
                 });
@@ -825,8 +1367,10 @@
                     if (translations[key]) el.setAttribute('aria-label', translations[key]);
                 });
 
-                document.getElementById('lang-toggle').textContent = translations.lang_toggle;
-                document.getElementById('video-btn').textContent = "MP4 ⬇️";
+                const langSelect = document.getElementById('lang-select');
+                if (langSelect) {
+                    langSelect.value = lang;
+                } document.getElementById('video-btn').textContent = "MP4 ⬇️";
                 document.getElementById('multi-video-btn').textContent = "MP4 ⬇️";
                 document.getElementById('multi-download-btn').textContent = translations.multi_download_btn;
                 localStorage.setItem('lang', lang);
@@ -841,24 +1385,157 @@
                 const downloadBtn = document.getElementById('download-btn');
                 const videoBtn = document.getElementById('video-btn');
                 const videoDropdown = document.getElementById('video-quality-dropdown');
-                const selectDestBtn = document.getElementById('select-dest-btn');
-                const destPathDisplay = document.getElementById('destination-path-display');
-
                 const singleLinkSection = document.getElementById('single-link-section');
                 const multiLinkSection = document.getElementById('multi-link-section');
                 const multiLinkToggleBtn = document.getElementById('multi-link-toggle-btn');
                 const multiLinkArea = document.getElementById('multi-link-area');
                 const multiDownloadBtn = document.getElementById('multi-download-btn');
                 const multiCancelBtn = document.getElementById('multi-cancel-btn');
+                const topBackBtn = document.getElementById('top-back-btn');
                 const multiVideoBtn = document.getElementById('multi-video-btn');
                 const multiVideoDropdown = document.getElementById('multi-video-quality-dropdown');
+                const destFolderRow = document.getElementById('dest-folder-row');
+                const sidebarDestPath = document.getElementById('sidebar-dest-path');
+                const savedPath = localStorage.getItem('destinationPath');
+                if (savedPath && sidebarDestPath) {
+                    sidebarDestPath.textContent = savedPath;
+                    sidebarDestPath.title = savedPath;
+                }
                 const netfreeToggle = document.getElementById('netfree-toggle');
+                const netfreeWarningModal = document.getElementById('netfree-warning-modal');
+                const closeNetfreeWarning = document.getElementById('close-netfree-warning');
+                const netfreeDontShow = document.getElementById('netfree-dont-show');
+                const updateNotification = document.getElementById('update-notification');
+                const updateText = document.getElementById('update-text');
+                const whatsNewBtn = document.getElementById('whats-new-btn');
+                const downloadUpdateBtn = document.getElementById('download-update-btn');
+                const closeUpdateBtn = document.getElementById('close-update-btn');
+                const dontShowAgainCheckbox = document.getElementById('dont-show-again-checkbox');
+                const settingsBtn = document.getElementById('settings-btn');
+                const sidebar = document.getElementById('settings-sidebar');
+                const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+                const overlay = document.getElementById('sidebar-overlay');
+                const langSelect = document.getElementById('lang-select');
+
+                function toggleSidebar() {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('visible');
+                }
+
+                const bgColorPicker = document.getElementById('bg-color-picker');
+                const bgImageRow = document.getElementById('bg-image-row');
+                const resetBgBtn = document.getElementById('reset-bg-btn');
+                const resetBgContainer = document.getElementById('reset-bg-container');
+
+                function applyBackground(type, value) {
+                    if (type === 'color') {
+                        document.body.style.backgroundImage = 'none';
+                        document.body.style.backgroundColor = value;
+                        localStorage.setItem('bgType', 'color');
+                        localStorage.setItem('bgValue', value);
+                        bgColorPicker.value = value;
+                    } else if (type === 'image') {
+                        const serverUrl = `http://localhost:9595/local-image?path=${encodeURIComponent(value)}&t=${Date.now()}`;
+                        document.body.style.backgroundColor = 'transparent';
+                        document.body.style.backgroundImage = `url('${serverUrl}')`;
+                        document.body.style.backgroundSize = 'cover';
+                        document.body.style.backgroundPosition = 'center';
+                        document.body.style.backgroundAttachment = 'fixed';
+
+                        localStorage.setItem('bgType', 'image');
+                        localStorage.setItem('bgValue', value);
+                    } else {
+                        document.body.style.backgroundImage = '';
+                        document.body.style.backgroundColor = 'var(--color-background)';
+                        localStorage.removeItem('bgType');
+                        localStorage.removeItem('bgValue');
+                        bgColorPicker.value = '#222222';
+                    }
+
+                    resetBgContainer.style.display = (type === 'default') ? 'none' : 'block';
+                }
+
+                const savedBgType = localStorage.getItem('bgType');
+                const savedBgValue = localStorage.getItem('bgValue');
+                if (savedBgType && savedBgValue) {
+                    applyBackground(savedBgType, savedBgValue);
+                } else {
+                    applyBackground('default', null);
+                }
+
+                bgColorPicker.addEventListener('input', (e) => {
+                    applyBackground('color', e.target.value);
+                });
+
+                bgImageRow.addEventListener('click', () => {
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        document.body.style.cursor = 'progress';
+                        bgImageRow.style.cursor = 'progress';
+
+                        ws.send(JSON.stringify({ type: 'select_background_image' }));
+                    }
+                });
+
+                resetBgBtn.addEventListener('click', () => {
+                    applyBackground('default', null);
+                });
+
+                settingsBtn.addEventListener('click', toggleSidebar);
+                closeSidebarBtn.addEventListener('click', toggleSidebar);
+                overlay.addEventListener('click', toggleSidebar);
+
+                const currentLang = localStorage.getItem('lang') || 'en';
+                langSelect.value = currentLang;
+
+                langSelect.addEventListener('change', (e) => {
+                    const newLang = e.target.value;
+                    applyTranslations(newLang);
+                });
+
                 const isNetfreeSaved = localStorage.getItem('isNetfreeUser') === 'true';
                 netfreeToggle.checked = isNetfreeSaved;
 
-                netfreeToggle.addEventListener('change', () => {
-                    localStorage.setItem('isNetfreeUser', netfreeToggle.checked);
+                netfreeToggle.addEventListener('change', (e) => {
+                    const isChecked = e.target.checked;
+
+                    if (isChecked) {
+                        const dontShowAgain = localStorage.getItem('dismissNetfreeWarning') === 'true';
+
+                        if (!dontShowAgain) {
+                            netfreeWarningModal.classList.add('visible');
+                        }
+                    }
+
+                    localStorage.setItem('isNetfreeUser', isChecked);
                 });
+
+                closeNetfreeWarning.addEventListener('click', () => {
+                    if (netfreeDontShow.checked) {
+                        localStorage.setItem('dismissNetfreeWarning', 'true');
+                    }
+                    netfreeWarningModal.classList.remove('visible');
+                });
+
+                whatsNewBtn.addEventListener('click', () => {
+                    if (latestReleaseNotes) {
+                        const currentLang = localStorage.getItem('lang') || 'en';
+
+                        const notesForLang = parseReleaseNotes(latestReleaseNotes, currentLang);
+
+                        const formattedNotes = notesForLang.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n');
+
+                        alert(formattedNotes);
+                    }
+                });
+
+                closeUpdateBtn.addEventListener('click', () => {
+                    if (dontShowAgainCheckbox.checked) {
+                        localStorage.setItem('dismissedUpdateVersion', latestVersionAvailable);
+                        console.log(`Dismissed version ${latestVersionAvailable}. It will not be shown again.`);
+                    }
+                    updateNotification.classList.remove('visible');
+                });
+
 
 
                 let lastDownloadWasQueue = false;
@@ -870,10 +1547,7 @@
                 let ws;
                 let isInitialConnection = true;
 
-                const savedPath = localStorage.getItem('destinationPath');
-                if (savedPath) {
-                    destPathDisplay.value = savedPath;
-                }
+
 
                 function showStatus(statusKey) {
                     mainContent.style.display = 'none';
@@ -912,9 +1586,23 @@
                             const { type, percent, speed, current, total, path } = data;
                             switch (type) {
                                 case 'destination_selected':
+                                    document.body.style.cursor = 'default';
+                                    if (destFolderRow) destFolderRow.style.cursor = 'pointer';
+
                                     if (path) {
-                                        destPathDisplay.value = path;
+                                        if (sidebarDestPath) {
+                                            sidebarDestPath.textContent = path;
+                                            sidebarDestPath.title = path;
+                                        }
                                         localStorage.setItem('destinationPath', path);
+                                    }
+                                    break; case 'background_selected':
+                                    document.body.style.cursor = 'default';
+                                    const bgRow = document.getElementById('bg-image-row');
+                                    if (bgRow) bgRow.style.cursor = 'pointer';
+
+                                    if (data.path) {
+                                        applyBackground('image', data.path);
                                     }
                                     break;
                                 case 'starting': showStatus('requesting'); break;
@@ -935,14 +1623,37 @@
                                 case 'success':
                                     showStatus('success');
                                     const successTextEl = document.getElementById('success-text');
-                                    const customPath = destPathDisplay.value;
+
+                                    const customPath = localStorage.getItem('destinationPath');
                                     if (customPath && !lastDownloadWasQueue) {
                                         successTextEl.textContent = translations.success_message_custom.replace('{path}', customPath);
                                     } else {
                                         successTextEl.textContent = lastDownloadWasQueue ? translations.success_message_multi : translations.success_message;
                                     }
+                                    break; case 'cancelled': showStatus('cancelled'); break;
+                                case 'netfree_error': case 'netfree_error':
+                                    showStatus('error');
+                                    const errorDiv = document.getElementById('status-error');
+
+                                    errorDiv.innerHTML = `
+                                        ❌ ${translations.netfree_error_msg}<br>
+                                        <div style="margin-top: 10px;">
+                                            <button id="open-netfree-settings" class="reset-btn" style="background-color: var(--color-red);">
+                                                ${translations.netfree_try_mode_btn}
+                                            </button>
+                                        </div>
+                                        <div style="margin-top: 5px;">
+                                            <button class="reset-btn" onclick="location.reload()">${translations.try_again}</button>
+                                        </div>
+                                    `;
+
+                                    document.getElementById('open-netfree-settings').addEventListener('click', () => {
+                                        toggleSidebar();
+                                        const netfreeRow = document.querySelector('#netfree-toggle').closest('.setting-row');
+                                        netfreeRow.style.borderColor = 'var(--color-red)';
+                                        setTimeout(() => netfreeRow.style.borderColor = '#444', 2000);
+                                    });
                                     break;
-                                case 'cancelled': showStatus('cancelled'); break;
                                 case 'error': showStatus('error'); break;
                                 case 'queue_complete':
                                     showStatus('queue_complete');
@@ -1009,6 +1720,28 @@
                                         showBtn.style.display = 'none';
                                     }
                                     break;
+
+                                case 'update_available':
+                                    const dismissedVersion = localStorage.getItem('dismissedUpdateVersion');
+                                    if (data.version === dismissedVersion) {
+                                        console.log(`Update ${data.version} was dismissed by the user. Not showing.`);
+                                        return;
+                                    }
+
+                                    latestVersionAvailable = data.version;
+                                    latestReleaseNotes = data.releaseNotes;
+
+                                    updateText.textContent = `${translations.update_available} (${latestVersionAvailable})`;
+                                    if (data.downloadUrl) {
+                                        const downloadBtn = document.getElementById('download-update-btn');
+                                        if (downloadBtn) {
+                                            downloadBtn.href = data.downloadUrl;
+                                        }
+                                    }
+                                    updateNotification.classList.remove('hidden');
+                                    updateNotification.classList.add('visible');
+                                    break;
+
                             }
                         } catch (e) { console.error("Failed to parse server message:", event.data, e); }
                     };
@@ -1029,11 +1762,12 @@
                 }
 
                 function setAllButtonsDisabled(disabled) {
-                    [urlInput, downloadBtn, videoBtn, multiLinkToggleBtn, multiDownloadBtn, multiVideoBtn, multiCancelBtn, selectDestBtn].forEach(el => el.disabled = disabled);
+                    [urlInput, downloadBtn, videoBtn, multiLinkToggleBtn, multiDownloadBtn, multiVideoBtn, multiCancelBtn].forEach(el => el.disabled = disabled);
                 }
 
                 function getDownloadRequestObject(baseObject) {
-                    const destinationPath = destPathDisplay.value;
+                    const destinationPath = localStorage.getItem('destinationPath');
+
                     if (destinationPath) {
                         baseObject.destinationPath = destinationPath;
                     }
@@ -1043,7 +1777,6 @@
 
                     return baseObject;
                 }
-
                 downloadBtn.addEventListener('click', () => {
                     lastDownloadWasQueue = false;
                     const url = validateUrl(urlInput.value);
@@ -1093,15 +1826,24 @@
                     ws.send(JSON.stringify(request));
                 }
 
-                selectDestBtn.addEventListener('click', () => {
-                    if (ws && ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({ type: 'select_destination' }));
-                    }
-                });
 
                 videoBtn.addEventListener('click', () => { videoDropdown.style.display = videoDropdown.style.display === 'block' ? 'none' : 'block'; });
-                multiLinkToggleBtn.addEventListener('click', () => { singleLinkSection.style.display = 'none'; multiLinkSection.style.display = 'block'; multiLinkArea.focus(); });
-                multiCancelBtn.addEventListener('click', () => { singleLinkSection.style.display = 'block'; multiLinkSection.style.display = 'none'; urlInput.focus(); });
+                const goBackToMain = () => {
+                    singleLinkSection.style.display = 'block';
+                    multiLinkSection.style.display = 'none';
+                    topBackBtn.style.display = 'none';
+                    urlInput.focus();
+                };
+
+                multiLinkToggleBtn.addEventListener('click', () => {
+                    singleLinkSection.style.display = 'none';
+                    multiLinkSection.style.display = 'block';
+                    topBackBtn.style.display = 'block';
+                    multiLinkArea.focus();
+                });
+
+                multiCancelBtn.addEventListener('click', goBackToMain);
+                topBackBtn.addEventListener('click', goBackToMain);
                 multiDownloadBtn.addEventListener('click', () => { startMultiDownload(null); });
                 multiVideoBtn.addEventListener('click', () => { multiVideoDropdown.style.display = multiVideoDropdown.style.display === 'block' ? 'none' : 'block'; });
                 multiVideoDropdown.addEventListener('click', (event) => {
@@ -1112,6 +1854,23 @@
                         startMultiDownload(formatId);
                     }
                 });
+
+                if (destFolderRow) {
+                    destFolderRow.addEventListener('click', () => {
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            document.body.style.cursor = 'progress';
+                            destFolderRow.style.cursor = 'progress';
+
+                            const currentLang = localStorage.getItem('lang') || 'en';
+                            const dialogTitle = currentLang === 'he' ? 'בחר תיקייה לשמירה' : 'Select Download Folder';
+
+                            ws.send(JSON.stringify({
+                                type: 'select_destination',
+                                title: dialogTitle
+                            }));
+                        }
+                    });
+                }
                 document.querySelectorAll('.cancel-btn').forEach(btn => { btn.addEventListener('click', () => { if (ws && ws.readyState === WebSocket.OPEN) { ws.send(JSON.stringify({ type: 'cancel_download' })); } }); });
                 document.getElementById('show-files-btn').addEventListener('click', () => { if (downloadedFileNames.length > 0) { const fileList = downloadedFileNames.join('\n'); alert(translations.downloaded_files_title + '\n\n' + fileList); } });
                 window.addEventListener('click', (event) => { if (!event.target.closest('.dropdown')) { videoDropdown.style.display = 'none'; multiVideoDropdown.style.display = 'none'; } });
@@ -1121,17 +1880,28 @@
                 connect();
             }
 
-            document.getElementById('lang-toggle').addEventListener('click', () => {
-                const currentLang = localStorage.getItem('lang') || 'en';
-                const newLang = currentLang === 'he' ? 'en' : 'he';
-                applyTranslations(newLang);
-            });
 
             const initialLang = localStorage.getItem('lang') || (navigator.language.startsWith('he') ? 'he' : 'en');
             applyTranslations(initialLang);
             initializeApp();
         });
     </script>
+    <div id="netfree-warning-modal" class="custom-modal hidden">
+        <div class="modal-content">
+            <h3 data-i18n="netfree_warning_title">שים לב: מצב תאימות</h3>
+            <p data-i18n="netfree_warning_text">
+                מצב זה מיועד בעיקר למשתמשי נטפרי...
+            </p>
+            <div class="modal-footer">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="netfree-dont-show">
+                    <label for="netfree-dont-show" data-i18n="netfree_dont_show">אל תציג אזהרה זו שוב</label>
+                </div>
+                <button id="close-netfree-warning" class="reset-btn" data-i18n="netfree_close_btn">הבנתי, סגור</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

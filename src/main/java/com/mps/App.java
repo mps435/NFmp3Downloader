@@ -46,7 +46,7 @@ public class App {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     public static volatile boolean isYtDlpUpdating = false;
 
-    private static final String GAS_PLAYLIST_API_URL = "https://script.google.com/macros/s/AKfycbw01J9WK-edp-NsvVHMEas6OMYEQhPEwwV_i2FVJaGWqTyacco3hGlaTp0vp6WmHZu1/exec";
+    private static final String GAS_PLAYLIST_API_URL = "  "; //here is google script link for playlists 
 
     private static void getPlaylistDetailsFromGas(String url, Session session) {
         new Thread(() -> {

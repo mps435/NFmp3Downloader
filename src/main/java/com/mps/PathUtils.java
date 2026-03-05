@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PathUtils {
-    
+
     private static final String APP_NAME = "NFmp3Downloader";
     private static Path applicationDirectory = null;
 
@@ -16,7 +16,7 @@ public class PathUtils {
         }
         try {
             File codeSourceFile = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            
+
             if (codeSourceFile.isFile()) {
                 applicationDirectory = codeSourceFile.getParentFile().toPath();
             } else {
@@ -25,7 +25,7 @@ public class PathUtils {
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Could not determine application path.", e);
         }
-        
+
         System.out.println("Application Directory resolved to: " + applicationDirectory);
         return applicationDirectory;
     }
@@ -37,8 +37,13 @@ public class PathUtils {
         }
         return Paths.get(appdata);
     }
-    
+
     public static Path getBinDirectory() {
         return getAppDataDirectory().resolve(APP_NAME).resolve("bin");
+    }
+
+    public static Path getIconPath() {
+
+        return getApplicationDirectory().resolve("icon.ico");
     }
 }

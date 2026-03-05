@@ -3,17 +3,18 @@
 
 [Setup]
 AppName=NFmp3Downloader
-AppVersion=2.1.0
+AppVersion=2.2.1
 AppPublisher=mps
 DefaultDirName={code:GetDefaultDir}
 DefaultGroupName=NFdownload
-OutputBaseFilename=nfmp3downloader-setup-2.1.0
+OutputBaseFilename=nfmp3downloader-setup-2.2.1
 PrivilegesRequired=admin
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\NFmp3Downloader.exe
 ArchitecturesInstallIn64BitMode=x64
+SetupIconFile=C:\Users\מוישי\Downloads\NFmp3Downloader\icon.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

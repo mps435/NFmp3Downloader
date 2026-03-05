@@ -9,18 +9,21 @@ public class NativeFolderDialog {
 
     public static String show(String title) {
         String safeTitle = (title != null && !title.isEmpty()) ? title : "Select Folder";
-        String script = buildScript(safeTitle, true, null);
+
+        String iconPath = PathUtils.getIconPath().toString();
+        String script = buildScript(safeTitle, true, null, iconPath);
         return executePowerShell(script);
     }
 
     public static String chooseFile(String title) {
         String safeTitle = (title != null && !title.isEmpty()) ? title : "Select Image";
         String filter = "Images (*.jpg;*.png;*.jpeg;*.webp)|*.jpg;*.png;*.jpeg;*.webp";
-        String script = buildScript(safeTitle, false, filter);
+
+        String iconPath = PathUtils.getIconPath().toString();
+        String script = buildScript(safeTitle, false, filter, iconPath);
         return executePowerShell(script);
     }
-
-    private static String buildScript(String title, boolean isFolderPicker, String filter) {
+    private static String buildScript(String title, boolean isFolderPicker, String filter, String iconPath) {
         StringBuilder sb = new StringBuilder();
         sb.append("$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ");
         boolean isHebrew = title.chars().anyMatch(c -> c >= 0x0590 && c <= 0x05FF);
@@ -30,6 +33,7 @@ public class NativeFolderDialog {
         }
 
         sb.append("Add-Type -AssemblyName System.Windows.Forms; ");
+        sb.append("[System.Windows.Forms.Application]::SetHighDpiMode('SystemAware'); ");
         sb.append("$d = New-Object System.Windows.Forms.OpenFileDialog; ");
         sb.append("$d.Title = '").append(title).append("'; ");
 
@@ -44,6 +48,11 @@ public class NativeFolderDialog {
         }
 
         sb.append("$dummy = New-Object System.Windows.Forms.Form; ");
+        sb.append("$iconPath = '").append(iconPath.replace("'", "''")).append("'; ");
+
+        sb.append("if (Test-Path $iconPath) { ");
+        sb.append("   try { $dummy.Icon = [System.Drawing.Icon]::new($iconPath); } catch {} ");
+        sb.append("} ");
         sb.append("$dummy.TopMost = $true; ");
         sb.append("$dummy.TopLevel = $true; ");
         sb.append("$dummy.ShowInTaskbar = $false; ");
@@ -67,6 +76,7 @@ public class NativeFolderDialog {
     }
 
     private static String executePowerShell(String script) {
+
         try {
             byte[] scriptBytes = script.getBytes(StandardCharsets.UTF_16LE);
             String encodedScript = Base64.getEncoder().encodeToString(scriptBytes);

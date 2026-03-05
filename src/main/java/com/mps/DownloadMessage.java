@@ -1,7 +1,8 @@
 package com.mps;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DownloadMessage {
@@ -11,7 +12,8 @@ public class DownloadMessage {
     private String speed;
     private String error;
     private String path;
-
+    private String title;
+    private String thumbnail;
     private String current;
     private String total;
 
@@ -49,9 +51,10 @@ public class DownloadMessage {
         msg.setTotal(total);
         return msg;
     }
-
-    public static DownloadMessage success() {
-        return new DownloadMessage("success");
+ public static DownloadMessage success(String path) {
+        DownloadMessage msg = new DownloadMessage("success");
+        msg.setPath(path);
+        return msg;
     }
 
     public static DownloadMessage error(String errorMessage) {
@@ -84,19 +87,26 @@ public class DownloadMessage {
         return msg;
     }
 
-    public static DownloadMessage queueComplete(int successCount, int failureCount, List<String> successfulFiles) {
+public static DownloadMessage queueComplete(int successCount, int failureCount, List<String> successfulFiles, String path) {
         DownloadMessage msg = new DownloadMessage("queue_complete");
         msg.setSuccessCount(successCount);
         msg.setFailureCount(failureCount);
         msg.setSuccessfulFiles(successfulFiles);
+        msg.setPath(path);
         return msg;
     }
-
     public static DownloadMessage updateAvailable(String version, String releaseNotes, String downloadUrl) {
         DownloadMessage msg = new DownloadMessage("update_available");
         msg.setVersion(version);
         msg.setReleaseNotes(releaseNotes);
         msg.setDownloadUrl(downloadUrl);
+        return msg;
+    }
+
+    public static DownloadMessage metadata(String title, String thumbnail) {
+        DownloadMessage msg = new DownloadMessage("metadata");
+        msg.setTitle(title);
+        msg.setThumbnail(thumbnail);
         return msg;
     }
 
@@ -206,5 +216,21 @@ public class DownloadMessage {
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }

@@ -58,7 +58,6 @@
             padding-bottom: 20px;
         }
 
-
         #lang-toggle {
             background: var(--color-dark);
             border: 1px solid #555;
@@ -212,7 +211,6 @@
         #update-notification.visible+#app-container {
             margin-top: 0;
         }
-
 
         header {
             display: flex;
@@ -800,7 +798,6 @@
             padding-top: 2px;
         }
 
-
         #settings-sidebar {
             position: fixed;
             top: 0;
@@ -1005,12 +1002,222 @@
             display: block;
             max-width: 160px;
         }
+
+        #resolution-slider {
+            -webkit-appearance: none;
+            height: 6px;
+            background: #555;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            direction: ltr;
+
+            margin: 0;
+        }
+
+        #resolution-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--color-blue);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        #resolution-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #fff;
+        }
+
+        #media-info-container {
+            display: none;
+
+            flex-direction: row;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid #555;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            direction: ltr;
+
+            transition: opacity 0.3s ease;
+        }
+
+        #media-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #444;
+            flex-shrink: 0;
+        }
+
+        #media-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--color-cream);
+            padding: 0 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+
+            -webkit-box-orient: vertical;
+            text-align: left;
+
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            border-radius: 6px;
+            background-color: rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .playlist-item:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .playlist-item-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .playlist-item-title {
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+
+        }
+
+        #playlist-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        #playlist-controls>div {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        #playlist-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #playlist-download-btn {
+            border: none;
+            background-color: transparent;
+            background-image: url('download-button.png');
+
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 48px;
+            width: 130px;
+
+            cursor: pointer;
+            transition: filter 0.3s, transform 0.1s;
+            margin: 0 auto;
+
+            display: block;
+        }
+
+        #playlist-download-btn:hover {
+            filter: brightness(1.15);
+        }
+
+        #playlist-download-btn:active {
+            transform: scale(0.98);
+        }
+
+        #playlist-video-btn {
+
+            width: 100px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        #playlist-actions .dropdown {
+            width: 100%;
+            text-align: center;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.3s;
+            background-color: var(--color-red) !important;
+
+        }
+
+        #multi-link-section #multi-video-btn {
+            width: 120px !important;
+
+            margin: 0 auto;
+
+            display: block;
+            background-color: var(--color-dark);
+
+        }
+
+        #multi-link-section .dropdown {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+
+        }
     </style>
 </head>
 
 <body>
-
-
     <button id="settings-btn" aria-label="Settings">
         <svg viewBox="0 0 24 24">
             <path
@@ -1063,6 +1270,15 @@
             </div>
 
             <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
+
+            <div class="setting-row">
+                <div class="setting-label">
+                    <span class="setting-icon">🔍</span>
+                    <span data-i18n="resolution_label">גודל תצוגה</span>
+                </div>
+                <input type="range" id="resolution-slider" min="0.85" max="1.3" step="0.01" value="1"
+                    style="width: 100px;">
+            </div>
 
             <div class="setting-row">
                 <div class="setting-label">
@@ -1131,6 +1347,30 @@
             </svg>
         </button>
 
+        <div id="playlist-selection-view" style="display: none; width: 100%;">
+            <h3 data-i18n="playlist_title">Select Videos to Download</h3>
+
+            <div id="playlist-controls">
+                <div>
+                    <input type="checkbox" id="select-all-checkbox" checked>
+                    <label for="select-all-checkbox" data-i18n="select_all">Select/Deselect All</label>
+                </div>
+            </div>
+
+            <div id="playlist-item-list">
+            </div>
+
+            <div id="playlist-actions">
+                <div class="dropdown">
+                    <button id="playlist-download-btn"></button>
+                    <div id="playlist-mp3-quality-dropdown" class="dropdown-content"></div>
+                </div>
+                <div class="dropdown">
+                    <button id="playlist-video-btn" class="video-btn">MP4 ⬇️</button>
+                    <div id="playlist-video-quality-dropdown" class="dropdown-content"></div>
+                </div>
+            </div>
+        </div>
 
         <main>
             <div id="main-content">
@@ -1141,7 +1381,15 @@
                             <button id="multi-link-toggle-btn"></button>
                         </div>
                         <div id="download-btn-container">
-                            <button id="download-btn" data-i18n-aria-label="download_btn_aria"></button>
+                            <div class="dropdown">
+                                <button id="download-btn" data-i18n-aria-label="download_btn_aria"></button>
+                                <div id="mp3-quality-dropdown" class="dropdown-content">
+                                    <a href="#" data-format="mp3_high" data-i18n="quality_mp3_high"></a>
+                                    <a href="#" data-format="mp3_medium" data-i18n="quality_mp3_medium"></a>
+                                    <a href="#" data-format="mp3_low" data-i18n="quality_mp3_low"></a>
+                                    <a href="#" data-format="raw_audio" data-i18n="quality_original_audio"></a>
+                                </div>
+                            </div>
                             <div class="dropdown">
                                 <button id="video-btn" class="video-btn"></button>
                                 <div id="video-quality-dropdown" class="dropdown-content">
@@ -1156,16 +1404,21 @@
                                     <a href="#"
                                         data-format="bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best[height<=480]"
                                         data-i18n="quality_480p"></a>
+                                    <a href="#" data-format="best" data-i18n="quality_original_video"></a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div id="multi-link-section" style="display: none;">
                     <p data-i18n="multi_link_instructions"></p>
                     <textarea id="multi-link-area" data-i18n-placeholder="multi_link_placeholder"></textarea>
                     <div class="multi-link-buttons">
-                        <button id="multi-download-btn"></button>
+                        <div class="dropdown">
+                            <button id="multi-download-btn"></button>
+                            <div id="multi-mp3-quality-dropdown" class="dropdown-content"></div>
+                        </div>
                         <div class="dropdown">
                             <button id="multi-video-btn" class="video-btn"></button>
                             <div id="multi-video-quality-dropdown" class="dropdown-content"></div>
@@ -1173,6 +1426,11 @@
                         <button id="multi-cancel-btn" data-i18n="multi_cancel_btn"></button>
                     </div>
                 </div>
+            </div>
+
+            <div id="media-info-container">
+                <img id="media-thumb" src="" alt="Thumbnail">
+                <span id="media-title">Loading title...</span>
             </div>
 
             <div id="status-section">
@@ -1186,7 +1444,27 @@
                         <div></div>
                         <div></div>
                     </div><span data-i18n="requesting"></span>
-                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
+                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button></div>
+                </div>
+
+                <div id="status-section">
+                    <div id="status-requesting" class="status-message" style="display: none;">
+                        <div class="loading-dots">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div><span data-i18n="requesting"></span>
+                        <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
+                        </div>
+                    </div>
+                    <div id="status-resolving-playlist" class="status-message" style="display: none;">
+                        <div class="loading-dots">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div><span data-i18n="resolving_playlist"></span>
+                        <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
+                        </div>
                     </div>
                 </div>
                 <div id="status-downloading" class="status-message" style="display: none;">
@@ -1194,8 +1472,7 @@
                         <div id="progress-bar" class="progress-bar"></div>
                     </div>
                     <span id="progress-text"></span>
-                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
-                    </div>
+                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button></div>
                 </div>
                 <div id="status-playlist" class="status-message" style="display: none;">
                     <div class="loading-dots">
@@ -1204,18 +1481,15 @@
                         <div></div>
                     </div>
                     <span id="playlist-progress-text"></span>
-                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
-                    </div>
+                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button></div>
                 </div>
                 <div id="status-merging" class="status-message" style="display: none;">
                     <div class="spinner"></div><span data-i18n="merging"></span>
-                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
-                    </div>
+                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button></div>
                 </div>
                 <div id="status-processing" class="status-message" style="display: none;">
                     <div class="spinner"></div><span data-i18n="processing"></span>
-                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
-                    </div>
+                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button></div>
                 </div>
                 <div id="status-update-check" class="status-message" style="display: none;">
                     <div class="spinner"></div><span data-i18n="update_check"></span>
@@ -1223,16 +1497,19 @@
                 <div id="status-updating" class="status-message" style="display: none;">
                     <div class="spinner"></div><span data-i18n="updating"></span>
                 </div>
-                <div id="status-success" class="status-message" style="display: none;">✅ <span
-                        id="success-text"></span><br><button class="reset-btn" data-i18n="download_another"></button>
+                <div id="status-success" class="status-message" style="display: none;">
+                    ✅ <span id="success-text"></span><br>
+                    <button class="reset-btn" data-i18n="download_another"></button>
                 </div>
-                <div id="status-error" class="status-message" style="display: none;">❌ <span
-                        data-i18n="error_message"></span> <span id="log-link" data-i18n="view_log"></span>.<br><button
-                        class="reset-btn" data-i18n="try_again"></button>
+                <div id="status-error" class="status-message" style="display: none;">
+                    ❌ <span data-i18n="error_message"></span>
+                    <span id="log-link" data-i18n="view_log"></span>.<br>
+                    <button class="reset-btn" data-i18n="try_again"></button>
                 </div>
-                <div id="status-cancelled" class="status-message" style="display: none;">🚫 <span
-                        data-i18n="cancelled_message"></span><br><button class="reset-btn"
-                        data-i18n="try_again"></button></div>
+                <div id="status-cancelled" class="status-message" style="display: none;">
+                    🚫 <span data-i18n="cancelled_message"></span><br>
+                    <button class="reset-btn" data-i18n="try_again"></button>
+                </div>
                 <div id="status-queue-complete" class="status-message" style="display: none;">
                     <span id="queue-complete-icon"></span>
                     <span id="queue-complete-text"></span><br>
@@ -1247,9 +1524,7 @@
             <p id="bookmark-info" data-i18n="bookmark_info"></p>
             <a id="bookmarklet" href="#" data-i18n="bookmark_title"></a>
         </footer>
-
     </div>
-
     <script>
         const allTranslations = {
             "en": {
@@ -1275,18 +1550,25 @@
                 "invalid_url_alert": "Please enter a valid YouTube link.", "bookmark_info": "To save as a bookmark, drag the following icon to your bookmarks bar.",
                 "bookmark_title": "NFmp3Downloader", "multi_link_instructions": "Paste one YouTube link per line.", "multi_link_placeholder": "https://...\nhttps://...",
                 "multi_download_btn": "Download All (MP3)", "multi_cancel_btn": "Back", "invalid_url_list_alert": "Please enter at least one valid YouTube link.",
-                "netfree_user": "NetFree Compatibility Mode",
+                "netfree_user": "NetFree Compatibility Mode", "no_internet_title": "No Internet Connection",
+                "no_internet_text": "The application requires an active internet connection to work. Please check your network settings.",
                 "invalid_url_list_alert": "Please enter at least one valid YouTube link.", "update_available": "New version available!",
-                "whats_new": "What's New?",
-                "download": "Download",
+                "whats_new": "What's New?", "resolving_playlist": "Resolving playlist details",
+                "download": "Download", "playlist_title": "Select Videos to Download",
+                "select_all": "Select/Deselect All",
+                "no_videos_selected_alert": "Please select at least one video to download.",
                 "dont_show_again": "Don't show this message again", "settings_title": "Settings",
                 "language_label": "Language", "netfree_warning_title": "Attention: Compatibility Mode",
                 "netfree_warning_text": "This mode is intended primarily for NetFree users experiencing connection issues (e.g., Bezeq providers).<br><br>If downloads work normally for you, <strong>it is recommended to keep this off</strong> for maximum speed.",
                 "netfree_dont_show": "Don't show this warning again", "credits_rights": "© All rights reserved to",
                 "credits_bugs": "Bugs & Feedback:",
-                "netfree_close_btn": "I understand, close",
+                "netfree_close_btn": "I understand, close", "quality_mp3_high": "MP3 - High Quality",
+                "quality_mp3_medium": "MP3 - Medium Quality",
+                "quality_mp3_low": "MP3 - Low Quality",
+                "quality_original_audio": "Original Audio (Raw)",
+                "quality_original_video": "Original Format (Any)",
                 "netfree_error_msg": "Error: Connection blocked by NetFree (Error 418).",
-                "netfree_try_mode_btn": "Try NetFree Compatibility Mode", "bg_color_label": "Background Color", "bg_image_label": "Background Image", "reset_bg_label": "Reset Background", "dest_folder_label": "Download Folder",
+                "netfree_try_mode_btn": "Try NetFree Compatibility Mode", "bg_color_label": "Background Color", "bg_image_label": "Background Image", "reset_bg_label": "Reset Background", "dest_folder_label": "Download Folder", "resolution_label": "Zoom / Scale",
 
                 "close": "Close"
 
@@ -1296,7 +1578,7 @@
                 "success_message_custom": "הקובץ נמצא בתיקייה: {path}",
                 "multi_link_btn": "הורד קישורים מרובים",
                 "success_message_multi": "הקבצים נמצאים בתיקייה חדשה בתוך תיקיית ההורדות.",
-                "cancel_btn": "בטל",
+                "cancel_btn": "בטל", "resolving_playlist": "מפענח פרטי פלייליסט...",
                 "cancelled_message": "ההורדה בוטלה.",
                 "queue_complete_perfect": "כל {total} הקבצים ירדו בהצלחה!",
                 "queue_complete_partial": "{success} מתוך {total} קבצים ירדו. {failed} נכשלו.",
@@ -1314,20 +1596,24 @@
                 "invalid_url_alert": "אנא הזן קישור תקין מיוטיוב.", "bookmark_info": "כדי לשמור כסימניה, ניתן לגרור את האייקון הבא לסרגל הסימניות.",
                 "bookmark_title": "NFmp3Downloader", "multi_link_instructions": "הדבק קישור אחד מיוטיוב בכל שורה.", "multi_link_placeholder": "https://...\nhttps://...",
                 "multi_download_btn": "הורד הכל (MP3)", "multi_cancel_btn": "חזור", "invalid_url_list_alert": "אנא הזן לפחות קישור תקין אחד מיוטיוב.", "netfree_user": "מצב תאימות - נטפרי", "update_available": "גרסה חדשה זמינה!", "credits_rights": "© כל הזכויות שמורות ל-",
-                "credits_bugs": "למשוב ודיווח על באגים:",
-                "whats_new": "מה חדש?",
-                "download": "הורד",
+                "credits_bugs": "למשוב ודיווח על באגים:", "no_internet_title": "אין חיבור לאינטרנט",
+                "no_internet_text": "התוכנה דורשת חיבור פעיל לאינטרנט כדי לעבוד. אנא בדוק את הגדרות הרשת שלך.",
+                "whats_new": "מה חדש?", "playlist_title": "בחר סרטונים להורדה",
+                "select_all": "בחר/בטל בחירת הכל",
+                "no_videos_selected_alert": "אנא בחר לפחות סרטון אחד להורדה.",
+                "download": "הורד", "quality_mp3_high": "MP3 - איכות גבוהה",
+                "quality_mp3_medium": "MP3 - איכות בינונית",
+                "quality_mp3_low": "MP3 - איכות נמוכה",
+                "quality_original_audio": "שמע מקורי (Raw)",
+                "quality_original_video": "פורמט מקורי (כל סוג)",
                 "dont_show_again": "אל תציג הודעה זו שוב", "netfree_warning_title": "שים לב: מצב תאימות",
                 "netfree_warning_text": "מצב זה מיועד בעיקר למשתמשי נטפרי הסובלים מבעיות הורדה (למשל גולשי בזק).<br><br>אם ההורדה עובדת לך כרגיל, <strong>מומלץ להשאיר אפשרות זו כבויה</strong> כדי לקבל מהירות מקסימלית.",
                 "netfree_dont_show": "אל תציג אזהרה זו שוב",
-                "netfree_close_btn": "הבנתי",
+                "netfree_close_btn": "הבנתי", "resolution_label": "גודל תצוגה",
                 "netfree_error_msg": "שגיאה: החיבור נחסם ע\"י NetFree (שגיאה 418).",
                 "netfree_try_mode_btn": "נסה להפעיל מצב תאימות-נטפרי", "bg_color_label": "צבע רקע", "bg_image_label": "תמונת רקע", "reset_bg_label": "אפס רקע", "dest_folder_label": "תיקיית הורדה",
 
                 "close": "סגור"
-
-
-
             }
         };
 
@@ -1343,8 +1629,6 @@
             const targetLang = lang.toUpperCase();
             return notesByLang[targetLang] || fullNotes;
         }
-
-
         document.addEventListener('DOMContentLoaded', () => {
             let translations = {};
 
@@ -1379,6 +1663,14 @@
 
             function initializeApp() {
                 let downloadedFileNames = [];
+                let currentPlaylistTitle = "";
+                const playlistSelectionView = document.getElementById('playlist-selection-view');
+                const selectAllCheckbox = document.getElementById('select-all-checkbox');
+                const playlistItemList = document.getElementById('playlist-item-list');
+                const playlistDownloadBtn = document.getElementById('playlist-download-btn');
+                const playlistVideoBtn = document.getElementById('playlist-video-btn');
+                const playlistMp3QualityDropdown = document.getElementById('playlist-mp3-quality-dropdown');
+                const playlistVideoQualityDropdown = document.getElementById('playlist-video-quality-dropdown');
                 const mainContent = document.getElementById('main-content');
                 const statusSection = document.getElementById('status-section');
                 const urlInput = document.getElementById('youtube-url');
@@ -1416,7 +1708,10 @@
                 const closeSidebarBtn = document.getElementById('close-sidebar-btn');
                 const overlay = document.getElementById('sidebar-overlay');
                 const langSelect = document.getElementById('lang-select');
-
+                const mediaInfoContainer = document.getElementById('media-info-container');
+                const mediaThumb = document.getElementById('media-thumb');
+                const mediaTitle = document.getElementById('media-title');
+                let currentVideoTitle = "";
                 function toggleSidebar() {
                     sidebar.classList.toggle('open');
                     overlay.classList.toggle('visible');
@@ -1427,7 +1722,30 @@
                 const resetBgBtn = document.getElementById('reset-bg-btn');
                 const resetBgContainer = document.getElementById('reset-bg-container');
 
-                function applyBackground(type, value) {
+                const resolutionSlider = document.getElementById('resolution-slider');
+                let animationFrameId = null;
+
+                function applyZoom(val) {
+
+                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+                    animationFrameId = requestAnimationFrame(() => {
+                        document.body.style.zoom = val;
+                    });
+
+                    localStorage.setItem('appZoomLevel', val);
+                }
+                const savedZoom = localStorage.getItem('appZoomLevel') || '1';
+
+                resolutionSlider.value = savedZoom;
+                document.body.style.zoom = savedZoom;
+                resolutionSlider.addEventListener('input', (e) => {
+                    applyZoom(e.target.value);
+                });
+                resolutionSlider.addEventListener('dblclick', () => {
+                    resolutionSlider.value = '1';
+                    applyZoom('1');
+                }); function applyBackground(type, value) {
                     if (type === 'color') {
                         document.body.style.backgroundImage = 'none';
                         document.body.style.backgroundColor = value;
@@ -1535,23 +1853,20 @@
                     }
                     updateNotification.classList.remove('visible');
                 });
-
-
-
                 let lastDownloadWasQueue = false;
 
                 multiVideoDropdown.innerHTML = videoDropdown.innerHTML;
+                document.getElementById('multi-mp3-quality-dropdown').innerHTML = document.getElementById('mp3-quality-dropdown').innerHTML;
 
-                const statusMap = { connecting: document.getElementById('status-connecting'), launching: document.getElementById('status-launching'), requesting: document.getElementById('status-requesting'), downloading: document.getElementById('status-downloading'), playlist: document.getElementById('status-playlist'), merging: document.getElementById('status-merging'), processing: document.getElementById('status-processing'), update_check: document.getElementById('status-update-check'), updating: document.getElementById('status-updating'), success: document.getElementById('status-success'), error: document.getElementById('status-error'), cancelled: document.getElementById('status-cancelled'), queue_complete: document.getElementById('status-queue-complete') };
+                const statusMap = { connecting: document.getElementById('status-connecting'), launching: document.getElementById('status-launching'), requesting: document.getElementById('status-requesting'), resolving_playlist: document.getElementById('status-resolving-playlist'), downloading: document.getElementById('status-downloading'), playlist: document.getElementById('status-playlist'), merging: document.getElementById('status-merging'), processing: document.getElementById('status-processing'), update_check: document.getElementById('status-update-check'), updating: document.getElementById('status-updating'), success: document.getElementById('status-success'), error: document.getElementById('status-error'), cancelled: document.getElementById('status-cancelled'), queue_complete: document.getElementById('status-queue-complete') };
+
                 const APP_PROTOCOL = 'nfmp3downloader://start';
                 let ws;
                 let isInitialConnection = true;
-
-
-
                 function showStatus(statusKey) {
                     mainContent.style.display = 'none';
                     statusSection.style.display = 'block';
+                    topBackBtn.style.display = 'none';
                     Object.values(statusMap).forEach(div => div.style.display = 'none');
                     if (statusKey && statusMap[statusKey]) {
                         statusMap[statusKey].style.display = 'block';
@@ -1596,7 +1911,32 @@
                                         }
                                         localStorage.setItem('destinationPath', path);
                                     }
-                                    break; case 'background_selected':
+                                    break;
+
+                                case 'playlist_details':
+
+                                    Object.values(statusMap).forEach(div => div.style.display = 'none');
+
+                                    if (data.data && data.data.items && data.data.items.length > 0) {
+
+                                        currentPlaylistTitle = data.data.title || "Unknown Playlist";
+                                        renderPlaylistSelection(data.data.items);
+                                    }
+                                    if (data.data && data.data.items && data.data.items.length > 0) {
+
+                                        renderPlaylistSelection(data.data.items);
+                                    } else {
+
+                                        showStatus('error');
+
+                                        const errorTextEl = document.getElementById('status-error').querySelector('span');
+                                        if (errorTextEl && data.data && data.data.error) {
+                                            errorTextEl.textContent = `${translations.error_message} (Details: ${data.data.error})`;
+                                        }
+                                    }
+                                    break;
+
+                                case 'background_selected':
                                     document.body.style.cursor = 'default';
                                     const bgRow = document.getElementById('bg-image-row');
                                     if (bgRow) bgRow.style.cursor = 'pointer';
@@ -1607,14 +1947,36 @@
                                     break;
                                 case 'starting': showStatus('requesting'); break;
                                 case 'progress':
-                                    showStatus('downloading');
+
+                                    const isProcessing = statusMap.processing.style.display === 'block';
+                                    const isMerging = statusMap.merging.style.display === 'block';
+                                    if (!isProcessing && !isMerging) {
+                                        showStatus('downloading');
+                                    }
                                     document.getElementById('progress-bar').style.width = percent + '%';
                                     document.getElementById('progress-text').textContent = `${translations.downloading} ${parseFloat(percent).toFixed(1)}% (${speed || ''})`;
-                                    break;
-                                case 'playlist_progress':
+                                    break; case 'playlist_progress':
                                     showStatus('playlist');
                                     const playlistTextEl = document.getElementById('playlist-progress-text');
                                     playlistTextEl.textContent = translations.playlist_progress.replace('{current}', current).replace('{total}', total);
+                                    break;
+                                case 'metadata':
+
+                                    mediaInfoContainer.style.display = 'flex';
+                                    mediaThumb.src = data.thumbnail;
+                                    mediaTitle.textContent = data.title;
+                                    currentVideoTitle = data.title;
+                                    const hebrewRegex = /[\u0590-\u05FF]/;
+                                    const isHebrewTitle = hebrewRegex.test(data.title);
+
+                                    if (isHebrewTitle) {
+                                        mediaInfoContainer.style.direction = 'rtl';
+                                        mediaTitle.style.textAlign = 'right';
+
+                                    } else {
+                                        mediaInfoContainer.style.direction = 'ltr';
+                                        mediaTitle.style.textAlign = 'left';
+                                    }
                                     break;
                                 case 'merging': showStatus('merging'); break;
                                 case 'processing': showStatus('processing'); break;
@@ -1623,14 +1985,17 @@
                                 case 'success':
                                     showStatus('success');
                                     const successTextEl = document.getElementById('success-text');
+                                    let finalPath = data.path || localStorage.getItem('destinationPath') || "Downloads";
 
-                                    const customPath = localStorage.getItem('destinationPath');
-                                    if (customPath && !lastDownloadWasQueue) {
-                                        successTextEl.textContent = translations.success_message_custom.replace('{path}', customPath);
+                                    let msg = translations.success_message_custom.replace('{path}', finalPath);
+
+                                    if (currentVideoTitle && !lastDownloadWasQueue) {
+                                        successTextEl.innerHTML = `<strong>${currentVideoTitle}</strong><br><span style="font-size:0.9em; direction:ltr; display:block; margin-top:5px;">${finalPath}</span>`;
                                     } else {
-                                        successTextEl.textContent = lastDownloadWasQueue ? translations.success_message_multi : translations.success_message;
+                                        successTextEl.innerHTML = `<span style="direction:ltr;">${finalPath}</span>`;
                                     }
-                                    break; case 'cancelled': showStatus('cancelled'); break;
+                                    break;
+                                case 'cancelled': showStatus('cancelled'); break;
                                 case 'netfree_error': case 'netfree_error':
                                     showStatus('error');
                                     const errorDiv = document.getElementById('status-error');
@@ -1658,51 +2023,57 @@
                                 case 'queue_complete':
                                     showStatus('queue_complete');
                                     const { successCount, failureCount, successfulFiles } = data;
+
                                     const queueTotal = successCount + failureCount;
+
                                     const textEl = document.getElementById('queue-complete-text');
                                     const iconEl = document.getElementById('queue-complete-icon');
                                     const statusBox = document.getElementById('status-queue-complete');
                                     const showBtn = document.getElementById('show-files-btn');
 
+                                    let summaryMessage = "";
+
                                     if (failureCount === 0) {
                                         iconEl.textContent = '✅ ';
-                                        textEl.textContent = translations.queue_complete_perfect.replace('{total}', queueTotal);
+                                        summaryMessage = translations.queue_complete_perfect.replace('{total}', queueTotal);
                                         statusBox.style.backgroundColor = 'rgba(46, 204, 113, 0.2)';
                                         statusBox.style.borderColor = '#2ecc71';
                                     } else if (successCount === 0) {
                                         iconEl.textContent = '❌ ';
-                                        textEl.textContent = translations.queue_complete_fail.replace('{total}', queueTotal);
+                                        summaryMessage = translations.queue_complete_fail.replace('{total}', queueTotal);
                                         statusBox.style.backgroundColor = 'rgba(234, 89, 77, 0.2)';
                                         statusBox.style.borderColor = 'var(--color-red)';
                                     } else {
                                         iconEl.textContent = '⚠️ ';
-                                        textEl.textContent = translations.queue_complete_partial
+                                        summaryMessage = translations.queue_complete_partial
                                             .replace('{success}', successCount)
                                             .replace('{total}', queueTotal)
                                             .replace('{failed}', failureCount);
                                         statusBox.style.backgroundColor = 'rgba(241, 196, 15, 0.2)';
                                         statusBox.style.borderColor = '#f1c40f';
-
                                     }
+                                    let pathHtml = "";
+                                    const queuePath = data.path || "";
+                                    if (queuePath) {
+                                        pathHtml = `<div style="font-size:0.85rem; color:#ccc; direction:ltr; margin-top:8px; word-break: break-all;">${queuePath}</div>`;
+                                    }
+
+                                    textEl.innerHTML = `<div>${summaryMessage}</div>${pathHtml}`;
+
                                     const existingLogLink = statusBox.querySelector('.log-link-container');
                                     if (existingLogLink) {
                                         existingLogLink.remove();
                                     }
 
                                     if (failureCount > 0) {
-                                        const logLinkContainer = document.createElement('span');
+                                        const logLinkContainer = document.createElement('div');
                                         logLinkContainer.className = 'log-link-container';
-
-                                        logLinkContainer.innerHTML = ` <a href="#" id="log-link-multi">${translations.view_log}</a>.`;
-
+                                        logLinkContainer.style.marginTop = "5px";
+                                        logLinkContainer.innerHTML = `<a href="#" id="log-link-multi" style="color:var(--color-cream); text-decoration:underline;">${translations.view_log}</a>`;
                                         textEl.appendChild(logLinkContainer);
 
                                         const newLogLink = document.getElementById('log-link-multi');
                                         if (newLogLink) {
-                                            newLogLink.style.textDecoration = 'underline';
-                                            newLogLink.style.cursor = 'pointer';
-                                            newLogLink.style.color = 'var(--color-cream)';
-
                                             newLogLink.addEventListener('click', (e) => {
                                                 e.preventDefault();
                                                 if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1720,7 +2091,6 @@
                                         showBtn.style.display = 'none';
                                     }
                                     break;
-
                                 case 'update_available':
                                     const dismissedVersion = localStorage.getItem('dismissedUpdateVersion');
                                     if (data.version === dismissedVersion) {
@@ -1746,21 +2116,66 @@
                         } catch (e) { console.error("Failed to parse server message:", event.data, e); }
                     };
                 }
+                function hideAllStatusAndShowMainContent() {
+                    Object.values(statusMap).forEach(div => div.style.display = 'none');
+                    mainContent.style.display = 'block';
+                    singleLinkSection.style.display = 'block';
+                    multiLinkSection.style.display = 'none';
+                    playlistSelectionView.style.display = 'none';
+                    urlInput.focus();
+                }
                 function resetUI() {
                     showMainContent();
                     setAllButtonsDisabled(false);
                     urlInput.value = '';
                     multiLinkArea.value = '';
+                    playlistSelectionView.style.display = 'none';
+
+                    mediaInfoContainer.style.display = 'none';
+                    mediaThumb.src = '';
+                    mediaTitle.textContent = '';
+                    currentVideoTitle = "";
+
                     urlInput.focus();
-                }
-                function validateUrl(url) {
+                } function validateUrl(url) {
                     const trimmedUrl = url.trim();
                     if (!trimmedUrl || !(trimmedUrl.includes('youtube.com') || trimmedUrl.includes('youtu.be'))) {
                         return null;
                     }
                     return trimmedUrl;
                 }
+                function renderPlaylistSelection(items) {
 
+                    mainContent.style.display = 'none';
+                    playlistSelectionView.style.display = 'block';
+                    topBackBtn.style.display = 'block';
+
+                    playlistItemList.innerHTML = '';
+                    playlistVideoBtn.textContent = "MP4 ⬇️";
+                    playlistMp3QualityDropdown.innerHTML = mp3Dropdown.innerHTML;
+                    playlistVideoQualityDropdown.innerHTML = videoDropdown.innerHTML;
+                    items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'playlist-item';
+                        const isHebrew = /[\u0590-\u05FF]/.test(item.title);
+
+                        div.innerHTML = `
+                        <input type="checkbox" class="video-checkbox" data-url="${item.url}" style="flex-shrink: 0;" checked>
+                        <img src="${item.thumbnail}" class="playlist-item-thumb" alt="thumbnail">
+                        <span class="playlist-item-title" style="direction: ${isHebrew ? 'rtl' : 'ltr'}; text-align: ${isHebrew ? 'right' : 'left'};" title="${item.title.replace(/"/g, '&quot;')}">${item.title}</span>
+                    `;
+
+                        div.addEventListener('click', (e) => {
+                            if (e.target.type !== 'checkbox') {
+                                const checkbox = div.querySelector('.video-checkbox');
+                                checkbox.checked = !checkbox.checked;
+                            }
+                        });
+                        playlistItemList.appendChild(div);
+                    });
+
+                    selectAllCheckbox.checked = true;
+                }
                 function setAllButtonsDisabled(disabled) {
                     [urlInput, downloadBtn, videoBtn, multiLinkToggleBtn, multiDownloadBtn, multiVideoBtn, multiCancelBtn].forEach(el => el.disabled = disabled);
                 }
@@ -1777,16 +2192,104 @@
 
                     return baseObject;
                 }
+                const mp3Dropdown = document.getElementById('mp3-quality-dropdown');
+                multiLinkToggleBtn.addEventListener('click', () => {
+                    singleLinkSection.style.display = 'none';
+                    multiLinkSection.style.display = 'block';
+                    topBackBtn.style.display = 'block';
+                    multiLinkArea.focus();
+                });
                 downloadBtn.addEventListener('click', () => {
+                    videoDropdown.style.display = 'none';
+                    mp3Dropdown.style.display = mp3Dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+
+                mp3Dropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName !== 'A') return;
+
+                    const formatId = event.target.dataset.format;
+                    mp3Dropdown.style.display = 'none';
+                    const url = validateUrl(urlInput.value);
+                    if (!url) { alert(translations.invalid_url_alert); return; }
+
+                    let isPlaylist = false;
+                    if (url.includes('&list=') || url.includes('?list=')) {
+                        if (confirm(translations.playlist_confirm_mp3)) { isPlaylist = true; }
+                    }
+
+                    showStatus('requesting');
+                    setAllButtonsDisabled(true);
+
+                    const request = getDownloadRequestObject({ type: 'download', url: url, playlist: isPlaylist, formatId: formatId });
+                    ws.send(JSON.stringify(request));
+                });
+                videoDropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName !== 'A') return;
+
                     lastDownloadWasQueue = false;
+                    const formatId = event.target.dataset.format;
+                    videoDropdown.style.display = 'none';
                     const url = validateUrl(urlInput.value);
                     if (!url) { alert(translations.invalid_url_alert); return; }
                     let isPlaylist = false;
-                    if (url.includes('&list=') || url.includes('?list=')) { if (confirm(translations.playlist_confirm_mp3)) { isPlaylist = true; } }
+                    if (url.includes('&list=') || url.includes('?list=')) {
+                        if (confirm(translations.playlist_confirm_video)) { isPlaylist = true; }
+                    }
                     showStatus('requesting');
                     setAllButtonsDisabled(true);
-                    const request = getDownloadRequestObject({ type: 'download', url: url, playlist: isPlaylist });
+                    const request = getDownloadRequestObject({ type: 'download_video', url: url, formatId: formatId, playlist: isPlaylist });
                     ws.send(JSON.stringify(request));
+                });
+                const multiMp3Dropdown = document.getElementById('multi-mp3-quality-dropdown');
+                function startMultiDownload(formatId, isVideo) {
+                    const urls = multiLinkArea.value.split('\n')
+                        .map(url => validateUrl(url))
+                        .filter(url => url !== null);
+
+                    if (urls.length === 0) {
+                        alert(translations.invalid_url_list_alert); return;
+                    }
+
+                    lastDownloadWasQueue = true;
+                    showStatus('playlist');
+                    const playlistTextEl = document.getElementById('playlist-progress-text');
+                    playlistTextEl.textContent = translations.playlist_progress.replace('{current}', '1').replace('{total}', urls.length);
+
+                    setAllButtonsDisabled(true);
+
+                    const requestType = isVideo ? 'download_video' : 'download';
+                    const request = getDownloadRequestObject({ type: 'download_queue', urls: urls, formatId: formatId });
+                    ws.send(JSON.stringify(request));
+                }
+                multiVideoBtn.addEventListener('click', () => {
+
+                    multiMp3Dropdown.style.display = 'none';
+                    multiVideoDropdown.style.display =
+                        multiVideoDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                multiDownloadBtn.addEventListener('click', () => {
+                    multiVideoDropdown.style.display = 'none';
+                    multiMp3Dropdown.style.display = multiMp3Dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+
+                multiMp3Dropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName === 'A') {
+                        const formatId = event.target.dataset.format;
+                        multiMp3Dropdown.style.display = 'none';
+                        startMultiDownload(formatId, false);
+                    }
+                });
+
+                multiVideoDropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName === 'A') {
+                        const formatId = event.target.dataset.format;
+                        multiVideoDropdown.style.display = 'none';
+                        startMultiDownload(formatId, true);
+                    }
                 });
 
                 videoDropdown.addEventListener('click', (event) => {
@@ -1825,27 +2328,24 @@
                     const request = getDownloadRequestObject({ type: 'download_queue', urls: urls, formatId: formatId });
                     ws.send(JSON.stringify(request));
                 }
-
-
-                videoBtn.addEventListener('click', () => { videoDropdown.style.display = videoDropdown.style.display === 'block' ? 'none' : 'block'; });
-                const goBackToMain = () => {
-                    singleLinkSection.style.display = 'block';
-                    multiLinkSection.style.display = 'none';
-                    topBackBtn.style.display = 'none';
-                    urlInput.focus();
-                };
-
-                multiLinkToggleBtn.addEventListener('click', () => {
-                    singleLinkSection.style.display = 'none';
-                    multiLinkSection.style.display = 'block';
-                    topBackBtn.style.display = 'block';
-                    multiLinkArea.focus();
+                videoBtn.addEventListener('click', () => {
+                    mp3Dropdown.style.display = 'none';
+                    videoDropdown.style.display = videoDropdown.style.display === 'block' ? 'none' : 'block';
                 });
 
+                const goBackToMain = () => {
+
+                    multiLinkSection.style.display = 'none';
+                    playlistSelectionView.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    singleLinkSection.style.display = 'block';
+                    topBackBtn.style.display = 'none';
+
+                    urlInput.value = '';
+                    urlInput.focus();
+                };
                 multiCancelBtn.addEventListener('click', goBackToMain);
                 topBackBtn.addEventListener('click', goBackToMain);
-                multiDownloadBtn.addEventListener('click', () => { startMultiDownload(null); });
-                multiVideoBtn.addEventListener('click', () => { multiVideoDropdown.style.display = multiVideoDropdown.style.display === 'block' ? 'none' : 'block'; });
                 multiVideoDropdown.addEventListener('click', (event) => {
                     event.preventDefault();
                     if (event.target.tagName === 'A') {
@@ -1873,14 +2373,121 @@
                 }
                 document.querySelectorAll('.cancel-btn').forEach(btn => { btn.addEventListener('click', () => { if (ws && ws.readyState === WebSocket.OPEN) { ws.send(JSON.stringify({ type: 'cancel_download' })); } }); });
                 document.getElementById('show-files-btn').addEventListener('click', () => { if (downloadedFileNames.length > 0) { const fileList = downloadedFileNames.join('\n'); alert(translations.downloaded_files_title + '\n\n' + fileList); } });
-                window.addEventListener('click', (event) => { if (!event.target.closest('.dropdown')) { videoDropdown.style.display = 'none'; multiVideoDropdown.style.display = 'none'; } });
-                document.getElementById('log-link').addEventListener('click', () => { if (ws && ws.readyState === WebSocket.OPEN) { ws.send(JSON.stringify({ type: 'open_log' })); } });
+                window.addEventListener('click', (event) => {
+
+                    if (!event.target.closest('.dropdown')) {
+
+                        mp3Dropdown.style.display = 'none';
+                        videoDropdown.style.display = 'none';
+                        multiMp3Dropdown.style.display = 'none';
+                        multiVideoDropdown.style.display = 'none';
+                        playlistMp3QualityDropdown.style.display = 'none';
+                        playlistVideoQualityDropdown.style.display = 'none';
+                    }
+                }); document.getElementById('log-link').addEventListener('click', () => { if (ws && ws.readyState === WebSocket.OPEN) { ws.send(JSON.stringify({ type: 'open_log' })); } });
                 document.querySelectorAll('.reset-btn').forEach(button => { button.addEventListener('click', resetUI); });
 
+                let debounceTimer;
+                urlInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const url = urlInput.value.trim();
+                        if (url.includes("list=")) {
+                            showStatus('resolving_playlist'); if (ws && ws.readyState === WebSocket.OPEN) {
+                                ws.send(JSON.stringify({ type: 'get_playlist_details', url: url }));
+                            }
+                        }
+                    }, 800);
+                });
+                selectAllCheckbox.addEventListener('change', (e) => {
+                    document.querySelectorAll('.video-checkbox').forEach(cb => cb.checked = e.target.checked);
+                });
+                function startPlaylistDownload(formatId) {
+                    const selectedUrls = [];
+                    document.querySelectorAll('.video-checkbox:checked').forEach(cb => {
+                        selectedUrls.push(cb.dataset.url);
+                    });
+
+                    if (selectedUrls.length === 0) {
+                        alert(translations.no_videos_selected_alert || "Please select at least one video to download.");
+                        return;
+                    }
+                    playlistSelectionView.style.display = 'none';
+                    topBackBtn.style.display = 'none';
+                    if (selectedUrls.length > 1) {
+                        showStatus('playlist');
+                    } else {
+                        showStatus('requesting');
+                    }
+
+                    const destinationPath = localStorage.getItem('destinationPath');
+                    const isNetfree = document.getElementById('netfree-toggle').checked;
+                    const currentLang = localStorage.getItem('lang') || 'en';
+
+                    ws.send(JSON.stringify({
+                        type: 'download_queue',
+                        urls: selectedUrls,
+                        formatId: formatId,
+                        destinationPath: destinationPath,
+                        isNetfreeUser: isNetfree,
+                        playlistTitle: currentPlaylistTitle,
+                        language: currentLang
+                    }));
+                }
+                playlistDownloadBtn.addEventListener('click', () => {
+                    playlistMp3QualityDropdown.style.display = playlistMp3QualityDropdown.style.display === 'block' ? 'none' : 'block';
+                    playlistVideoQualityDropdown.style.display = 'none';
+                });
+
+                playlistMp3QualityDropdown.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (e.target.tagName === 'A') {
+                        startPlaylistDownload(e.target.dataset.format);
+                        playlistMp3QualityDropdown.style.display = 'none';
+                    }
+                });
+                playlistVideoBtn.addEventListener('click', () => {
+                    playlistVideoQualityDropdown.style.display = playlistVideoQualityDropdown.style.display === 'block' ? 'none' : 'block';
+                    playlistMp3QualityDropdown.style.display = 'none';
+                });
+
+                playlistVideoQualityDropdown.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (e.target.tagName === 'A') {
+                        startPlaylistDownload(e.target.dataset.format);
+                        playlistVideoQualityDropdown.style.display = 'none';
+                    }
+                });
+                const noInternetModal = document.getElementById('no-internet-modal');
+                const tryAgainInternetBtn = document.getElementById('try-again-internet-btn');
+
+                function handleConnectionChange() {
+                    if (navigator.onLine) {
+
+                        noInternetModal.classList.remove('visible');
+                        noInternetModal.classList.add('hidden');
+                    } else {
+
+                        noInternetModal.classList.remove('hidden');
+                        noInternetModal.classList.add('visible');
+                    }
+                }
+                window.addEventListener('online', handleConnectionChange);
+                window.addEventListener('offline', handleConnectionChange);
+                tryAgainInternetBtn.addEventListener('click', () => {
+                    if (navigator.onLine) {
+                        handleConnectionChange();
+
+                        window.location.reload();
+                    } else {
+
+                        tryAgainInternetBtn.classList.add('shake');
+                        setTimeout(() => tryAgainInternetBtn.classList.remove('shake'), 500);
+                    }
+                });
+                handleConnectionChange();
                 connect();
             }
-
-
             const initialLang = localStorage.getItem('lang') || (navigator.language.startsWith('he') ? 'he' : 'en');
             applyTranslations(initialLang);
             initializeApp();
@@ -1897,11 +2504,22 @@
                     <input type="checkbox" id="netfree-dont-show">
                     <label for="netfree-dont-show" data-i18n="netfree_dont_show">אל תציג אזהרה זו שוב</label>
                 </div>
-                <button id="close-netfree-warning" class="reset-btn" data-i18n="netfree_close_btn">הבנתי, סגור</button>
+                <button id="close-netfree-warning" class="reset-btn" data-i18n="netfree_close_btn">הבנתי,
+                    סגור</button>
             </div>
         </div>
     </div>
-
+    <!-- מודל אין אינטרנט -->
+    <div id="no-internet-modal" class="custom-modal hidden" style="backdrop-filter: blur(5px);">
+        <div class="modal-content" style="border-color: var(--color-red);">
+            <h3 style="color: var(--color-red);" data-i18n="no_internet_title">No Internet Connection</h3>
+            <img src="no-internet.png" alt="No Internet" style="width: 100px; height: auto; margin: 15px 0;">
+            <p data-i18n="no_internet_text">Please check your network settings and try again.</p>
+            <div class="modal-footer" style="border-top: none;">
+                <button id="try-again-internet-btn" class="reset-btn" data-i18n="try_again">Try Again</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

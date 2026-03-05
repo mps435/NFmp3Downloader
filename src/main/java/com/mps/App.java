@@ -11,11 +11,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.swing.UIManager;
 
 import org.eclipse.jetty.websocket.api.Session;
@@ -35,12 +39,82 @@ public class App {
 
     private static final int PORT = 9595;
     private static final String APP_NAME = "NFmp3Downloader";
-    private static final String CURRENT_VERSION = "2.1.0";
+    private static final String CURRENT_VERSION = "2.2.1";
     private static final String GITHUB_API_URL = "https://api.github.com/repos/mps435/NFmp3Downloader/releases/latest";
     private static Logger logger;
     private static final ConcurrentHashMap<String, Session> activeSessions = new ConcurrentHashMap<>();
     private static final ObjectMapper objectMapper = new ObjectMapper();
     public static volatile boolean isYtDlpUpdating = false;
+
+    private static final String GAS_PLAYLIST_API_URL = "https://script.google.com/macros/s/AKfycbw01J9WK-edp-NsvVHMEas6OMYEQhPEwwV_i2FVJaGWqTyacco3hGlaTp0vp6WmHZu1/exec";
+
+    private static void getPlaylistDetailsFromGas(String url, Session session) {
+        new Thread(() -> {
+
+            String playlistId = null;
+            try {
+                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("list=([a-zA-Z0-9_-]+)");
+                java.util.regex.Matcher matcher = pattern.matcher(url);
+                if (matcher.find()) {
+                    playlistId = matcher.group(1);
+                }
+            } catch (Exception e) {
+                logger.error("Failed to extract playlist ID", e);
+            }
+
+            if (playlistId == null) {
+
+                sendMessage(session, DownloadMessage.error("Invalid Playlist URL"));
+                return;
+            }
+
+            logger.info("Fetching playlist details from GAS for ID: {}", playlistId);
+            try {
+
+                TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+                }};
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+                java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
+                        .sslContext(sslContext)
+                        .followRedirects(java.net.http.HttpClient.Redirect.ALWAYS)
+                        .build();
+
+                String targetUrl = GAS_PLAYLIST_API_URL + "?id=" + playlistId;
+                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder().uri(java.net.URI.create(targetUrl)).GET().build();
+                java.net.http.HttpResponse<String> response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+
+                if (response.statusCode() == 200) {
+
+                    String rawJson = response.body();
+                    JsonNode gasResponse = objectMapper.readTree(rawJson);
+
+                    com.fasterxml.jackson.databind.node.ObjectNode finalResponse = objectMapper.createObjectNode();
+                    finalResponse.put("type", "playlist_details");
+                    finalResponse.set("data", gasResponse);
+                    if (session != null && session.isOpen()) {
+                        session.getRemote().sendString(objectMapper.writeValueAsString(finalResponse));
+                    }
+                } else {
+                    sendMessage(session, DownloadMessage.error("Failed to fetch playlist (Server Error)"));
+                }
+            } catch (Exception e) {
+                logger.error("Critical error fetching playlist details", e);
+                sendMessage(session, DownloadMessage.error("Critical error fetching playlist details"));
+            }
+        }).start();
+    }
+
     public static void main(String[] args) {
         setupLogging();
         setupBinaries();
@@ -83,15 +157,16 @@ public class App {
                         if (mimeType == null) {
                             String lowerPath = path.toString().toLowerCase();
                             if (lowerPath.endsWith(".png")) {
-                                mimeType = "image/png"; 
-                            }else if (lowerPath.endsWith(".gif")) {
-                                mimeType = "image/gif"; 
-                            }else if (lowerPath.endsWith(".webp")) {
-                                mimeType = "image/webp"; 
-                            }else {
+                                mimeType = "image/png";
+                            } else if (lowerPath.endsWith(".gif")) {
+                                mimeType = "image/gif";
+                            } else if (lowerPath.endsWith(".webp")) {
+                                mimeType = "image/webp";
+                            } else {
                                 mimeType = "image/jpeg";
 
-                                                    }}
+                            }
+                        }
 
                         ctx.contentType(mimeType);
 
@@ -119,16 +194,32 @@ public class App {
                 checkForUpdatesInBackground(ctx.session);
             });
 
+            ws.onClose(ctx -> {
+                logger.info("WebSocket client disconnected: {}", ctx.getSessionId());
+                activeSessions.remove(ctx.getSessionId());
+                if (activeSessions.isEmpty()) {
+                    logger.info("All WebSocket clients disconnected. Shutting down application gracefully.");
+
+                    app.stop();
+
+                    System.exit(0);
+                }
+            });
+
             ws.onMessage(ctx -> {
                 try {
                     String message = ctx.message();
                     JsonNode jsonNode = objectMapper.readTree(message);
                     String type = jsonNode.get("type").asText();
-                    String destinationPath = jsonNode.has("destinationPath") ? jsonNode.get("destinationPath").asText(null) : null;
+                    String destinationPath = jsonNode.has("destinationPath")
+                            ? jsonNode.get("destinationPath").asText(null)
+                            : null;
                     boolean isNetfree = jsonNode.has("isNetfreeUser") && jsonNode.get("isNetfreeUser").asBoolean(false);
 
                     if ("select_destination".equals(type)) {
-                        String dialogTitle = jsonNode.has("title") ? jsonNode.get("title").asText("Select download folder") : "Select download folder";
+                        String dialogTitle = jsonNode.has("title")
+                                ? jsonNode.get("title").asText("Select download folder")
+                                : "Select download folder";
                         logger.info("Client requested to select a destination folder with title: '{}'", dialogTitle);
                         handleSelectDestination(ctx.session, dialogTitle);
                     } else if ("cancel_download".equals(type)) {
@@ -138,14 +229,31 @@ public class App {
                         List<String> urls = objectMapper.convertValue(jsonNode.get("urls"), new TypeReference<>() {
                         });
                         String formatId = jsonNode.has("formatId") ? jsonNode.get("formatId").asText(null) : null;
-                        logger.info("Received download queue request with {} URLs, formatId: {}, destination: {}, isNetfree: {}", urls.size(), formatId, destinationPath, isNetfree);
-                        DownloadService.startDownloadQueue(urls, formatId, destinationPath, isNetfree, ctx.session);
-                    } else if ("download".equals(type)) {
-                        String youtubeUrl = jsonNode.get("url").asText();
-                        boolean isPlaylist = jsonNode.has("playlist") && jsonNode.get("playlist").asBoolean();
-                        logger.info("Received MP3 download request for URL: {}, isPlaylist: {}, destination: {}, isNetfree: {}", youtubeUrl, isPlaylist, destinationPath, isNetfree);
-                        DownloadService.startDownload(youtubeUrl, isPlaylist, null, destinationPath, isNetfree, ctx.session);
+                        String playlistTitle = jsonNode.has("playlistTitle") ? jsonNode.get("playlistTitle").asText(null) : null;
+                        String language = jsonNode.has("language") ? jsonNode.get("language").asText("en") : "en";
 
+                        logger.info("Received download queue request with {} URLs.", urls.size());
+                        if (urls.size() == 1) {
+                            logger.info("Only 1 video selected from playlist. Switching to Single Download mode.");
+                            String singleUrl = urls.get(0);
+
+                            DownloadService.startDownload(singleUrl, false, formatId, destinationPath, isNetfree, ctx.session);
+                        } else {
+
+                            logger.info("Multiple videos selected. Starting Queue mode for playlist: {}", playlistTitle);
+                            DownloadService.startDownloadQueue(urls, formatId, destinationPath, isNetfree, ctx.session, playlistTitle, language);
+                        }
+
+                    } else if ("get_playlist_details".equals(type)) {
+                        String youtubeUrl = jsonNode.get("url").asText();
+                        getPlaylistDetailsFromGas(youtubeUrl, ctx.session);
+
+                    } else if ("download".equals(type) || "download_video".equals(type)) {
+
+                        String youtubeUrl = jsonNode.get("url").asText();
+                        String formatId = jsonNode.has("formatId") ? jsonNode.get("formatId").asText(null) : null;
+                        DownloadService.startDownload(youtubeUrl, false, formatId, destinationPath, isNetfree,
+                                ctx.session);
                     } else if ("select_background_image".equals(type)) {
                         new Thread(() -> {
                             String path = NativeFolderDialog.chooseFile("Select Background Image");
@@ -159,12 +267,6 @@ public class App {
                                 logger.error("Failed to send bg path", e);
                             }
                         }).start();
-                    } else if ("download_video".equals(type)) {
-                        String youtubeUrl = jsonNode.get("url").asText();
-                        String formatId = jsonNode.get("formatId").asText();
-                        boolean isPlaylist = jsonNode.has("playlist") && jsonNode.get("playlist").asBoolean();
-                        logger.info("Received video download request for URL: {}, formatId: {}, isPlaylist: {}, isNetfree: {}", youtubeUrl, formatId, isPlaylist, isNetfree);
-                        DownloadService.startDownload(youtubeUrl, isPlaylist, formatId, destinationPath, isNetfree, ctx.session);
                     } else if ("open_log".equals(type)) {
                         logger.info("Client requested to open log file.");
                         openLogFile();
@@ -174,30 +276,6 @@ public class App {
                     logger.error("Error processing WebSocket message", e);
                 }
             });
-
-            ws.onClose(ctx -> {
-                logger.info("WebSocket client disconnected: {} - Reason: {}", ctx.getSessionId(), ctx.reason());
-                activeSessions.remove(ctx.getSessionId());
-                if (activeSessions.isEmpty()) {
-                    logger.info("Last client disconnected. Attempting graceful shutdown...");
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(2000);
-                            if (activeSessions.isEmpty()) {
-                                logger.info("No new clients. Shutting down server.");
-                                app.stop();
-                                logger.info("Server stopped. Exiting application.");
-                                System.exit(0);
-                            } else {
-                                logger.info("A new client reconnected. Aborting shutdown.");
-                            }
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }).start();
-                }
-            });
-
             ws.onError(ctx -> {
                 logger.error("WebSocket error for client {}:", ctx.getSessionId(), ctx.error());
             });
@@ -225,7 +303,8 @@ public class App {
                 ProcessBuilder processBuilder = new ProcessBuilder(command);
                 Process process = processBuilder.start();
 
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         logger.info("[yt-dlp-update]: {}", line);
@@ -389,21 +468,41 @@ public class App {
         Thread updateCheckerThread = new Thread(() -> {
             try {
                 logger.info("Checking for application updates from GitHub...");
+                TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
 
-                java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        }
+
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        }
+                    }
+                };
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+                java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
+                        .sslContext(sslContext)
+                        .followRedirects(java.net.http.HttpClient.Redirect.NORMAL)
+                        .build();
                 java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
                         .uri(java.net.URI.create(GITHUB_API_URL))
                         .header("Accept", "application/vnd.github.v3+json")
                         .build();
 
-                java.net.http.HttpResponse<String> response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+                java.net.http.HttpResponse<String> response = client.send(request,
+                        java.net.http.HttpResponse.BodyHandlers.ofString());
 
                 if (response.statusCode() == 200) {
                     JsonNode releaseInfo = objectMapper.readTree(response.body());
                     String latestVersionTag = releaseInfo.get("tag_name").asText();
                     String releaseNotes = releaseInfo.get("body").asText();
 
-                    String latestVersion = latestVersionTag.startsWith("v") ? latestVersionTag.substring(1) : latestVersionTag;
+                    String latestVersion = latestVersionTag.startsWith("v") ? latestVersionTag.substring(1)
+                            : latestVersionTag;
 
                     logger.info("Current version: {}, Latest version on GitHub: {}", CURRENT_VERSION, latestVersion);
 
@@ -417,30 +516,26 @@ public class App {
                                     directDownloadUrl = asset.get("browser_download_url").asText();
                                     break;
                                 }
-
                             }
-
                             if (directDownloadUrl.isEmpty()) {
                                 directDownloadUrl = releaseInfo.get("html_url").asText();
                             }
-
-                            sendMessage(session, DownloadMessage.updateAvailable(latestVersionTag, releaseNotes, directDownloadUrl));
+                            sendMessage(session,
+                                    DownloadMessage.updateAvailable(latestVersionTag, releaseNotes, directDownloadUrl));
                         }
                     } else {
                         logger.info("Application is up to date.");
                     }
                 } else {
-                    logger.warn("Failed to check for updates. GitHub API returned status code: {}", response.statusCode());
+                    logger.warn("Failed to check for updates. GitHub API returned status code: {}",
+                            response.statusCode());
                 }
             } catch (Exception e) {
                 logger.error("Error while checking for updates.", e);
             }
-        }
-        );
-        updateCheckerThread.setName(
-                "App-Update-Checker");
-        updateCheckerThread.setDaemon(
-                true);
+        });
+        updateCheckerThread.setName("App-Update-Checker");
+        updateCheckerThread.setDaemon(true);
         updateCheckerThread.start();
     }
 

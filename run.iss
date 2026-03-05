@@ -14,7 +14,7 @@ SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\NFmp3Downloader.exe
 ArchitecturesInstallIn64BitMode=x64
-SetupIconFile=C:\Users\מוישי\Downloads\NFmp3Downloader\icon.ico
+SetupIconFile=icon.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

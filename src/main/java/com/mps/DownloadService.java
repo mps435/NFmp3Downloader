@@ -773,9 +773,8 @@ public class DownloadService {
             logger.error("Advanced download flow error", e);
             sendAdvancedMessage(session, DownloadMessage.error("Critical error in advanced download"), downloadId);
         } finally {
-            advancedDownloadsMap.remove(downloadId);
-
             if (!ctx.pauseRequested.get()) {
+                advancedDownloadsMap.remove(downloadId);
                 deleteDirectoryRecursively(tempDir);
             }
         }
@@ -824,8 +823,8 @@ public class DownloadService {
                 }
 
                 if (line.contains("[Merger] Merging formats")) {
-                    sendAdvancedMessage(session, DownloadMessage.merging(), downloadId); 
-                }else if (line.startsWith("[ExtractAudio]") || line.startsWith("[ffmpeg]") || line.startsWith("[Metadata]") || line.startsWith("[ThumbnailsConvertor]")) {
+                    sendAdvancedMessage(session, DownloadMessage.merging(), downloadId);
+                } else if (line.startsWith("[ExtractAudio]") || line.startsWith("[ffmpeg]") || line.startsWith("[Metadata]") || line.startsWith("[ThumbnailsConvertor]")) {
                     sendAdvancedMessage(session, DownloadMessage.processing(), downloadId);
                 }
             });
@@ -841,8 +840,8 @@ public class DownloadService {
                 }
 
                 if (line.contains("[Merger]")) {
-                    sendAdvancedMessage(session, DownloadMessage.merging(), downloadId); 
-                }else if (line.startsWith("[ExtractAudio]") || line.startsWith("[ffmpeg]") || line.startsWith("[Metadata]")) {
+                    sendAdvancedMessage(session, DownloadMessage.merging(), downloadId);
+                } else if (line.startsWith("[ExtractAudio]") || line.startsWith("[ffmpeg]") || line.startsWith("[Metadata]")) {
                     sendAdvancedMessage(session, DownloadMessage.processing(), downloadId);
                 }
 

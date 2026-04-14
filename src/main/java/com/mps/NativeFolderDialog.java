@@ -47,7 +47,9 @@ public class NativeFolderDialog {
             sb.append("$d.Filter = '").append(filter).append("'; ");
         }
 
-        sb.append("$dummy = New-Object System.Windows.Forms.Form; ");
+sb.append("$dummy = New-Object System.Windows.Forms.Form; ");
+
+        sb.append("$dummy.Text = '").append(title).append("'; ");
         sb.append("$iconPath = '").append(iconPath.replace("'", "''")).append("'; ");
 
         sb.append("if (Test-Path $iconPath) { ");
@@ -55,9 +57,9 @@ public class NativeFolderDialog {
         sb.append("} ");
         sb.append("$dummy.TopMost = $true; ");
         sb.append("$dummy.TopLevel = $true; ");
+
         sb.append("$dummy.ShowInTaskbar = $false; ");
-        sb.append("$dummy.Opacity = 0; ");
-        sb.append("$dummy.StartPosition = 'CenterScreen'; ");
+        sb.append("$dummy.Opacity = 0; ");        sb.append("$dummy.StartPosition = 'CenterScreen'; ");
         sb.append("$dummy.Show(); ");
         sb.append("$dummy.Activate(); ");
 

@@ -2,6 +2,7 @@ package com.mps;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -42,8 +43,21 @@ public class PathUtils {
         return getAppDataDirectory().resolve(APP_NAME).resolve("bin");
     }
 
-    public static Path getIconPath() {
+public static Path getIconPath() {
+        Path appDataDir = getAppDataDirectory().resolve(APP_NAME);
+        Path iconDest = appDataDir.resolve("icon.ico");
 
-        return getApplicationDirectory().resolve("icon.ico");
+        // חילוץ האייקון מתוך משאבי התוכנה אל תיקייה אמיתית במחשב (AppData)
+        if (!Files.exists(iconDest)) {
+            try (java.io.InputStream in = PathUtils.class.getResourceAsStream("/icon.ico")) {
+                if (in != null) {
+                    Files.createDirectories(appDataDir);
+                    Files.copy(in, iconDest, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to extract icon for dialogs: " + e.getMessage());
+            }
+        }
+        return iconDest;
     }
 }

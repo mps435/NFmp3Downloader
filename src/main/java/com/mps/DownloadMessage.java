@@ -16,6 +16,7 @@ public class DownloadMessage {
     private String thumbnail;
     private String current;
     private String total;
+    private String downloadId;
 
     private Integer successCount;
     private Integer failureCount;
@@ -233,4 +234,13 @@ public static DownloadMessage queueComplete(int successCount, int failureCount, 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
+
+public String getDownloadId() {
+        return downloadId;
+    }
+
+    public void setDownloadId(String downloadId) {
+        this.downloadId = downloadId;
+    }
+
 }

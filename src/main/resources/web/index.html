@@ -9,10 +9,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
         :root {
-            --color-red: #ea594d;
+            --color-red: #d85a53;
             --color-blue: #4d90b3;
             --color-cream: #f2e9e4;
             --color-dark: #3a3535;
@@ -196,8 +197,7 @@
             width: 100%;
             max-width: 500px;
 
-            padding: 1.5rem 2rem 1rem 2rem;
-
+            padding: 25px;
             background-color: #2c2c2c;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -228,22 +228,20 @@
         }
 
         h1 {
-            font-size: 45px;
-            color: var(--color-red);
-
-            text-shadow:
-                -1px -1px 0 #fff,
-                1px -1px 0 #fff,
-                -1px 1px 0 #fff,
-                1px 1px 0 #fff,
-                0px 4px 10px rgba(0, 0, 0, 0.5);
-
+            font-size: 42px;
+            color: #ffffff;
             margin: 0;
             font-weight: 800;
+            letter-spacing: 1px;
+
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+                0 0 20px rgba(77, 144, 179, 0.4),
+                0 0 30px rgba(216, 90, 83, 0.5),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         #single-link-section {
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
         }
 
         #input-section {
@@ -261,7 +259,8 @@
 
         #youtube-url {
             width: 100%;
-            padding: 12px;
+            height: 50px;
+            padding: 0 15px;
             border-radius: 8px;
             border: 2px solid var(--color-dark);
             background-color: #333;
@@ -269,7 +268,7 @@
             font-size: 1rem;
             text-align: left;
             direction: ltr;
-            height: 48px;
+            box-sizing: border-box;
         }
 
         #youtube-url:focus {
@@ -278,122 +277,120 @@
         }
 
         #multi-link-toggle-btn {
-            display: block;
-            width: 210px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 8px auto 0 auto;
+            width: fit-content;
+            min-width: 140px;
             height: 32px;
-            margin: 0 auto;
-            border: none;
-            background-color: transparent;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            padding: 0 20px;
+
+            border: 2px solid #666;
+
+            border-radius: 20px;
+
+            background-color: rgba(44, 44, 44, 0.8);
+
+            color: #eee;
+            font-family: 'Varela Round', sans-serif;
+            font-weight: 600;
+
+            letter-spacing: 0.5px;
             cursor: pointer;
-            transition: transform 0.1s, filter 0.2s;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-decoration: none;
         }
 
         #multi-link-toggle-btn:hover:not(:disabled) {
-            filter: brightness(1.1);
+            background-color: #333;
+            color: #fff;
+            border-color: var(--color-red);
+
+            box-shadow: 0 0 8px rgba(216, 90, 83, 0.4);
+
+            transform: translateY(-1px);
+
         }
 
         #multi-link-toggle-btn:active:not(:disabled) {
-            transform: scale(0.98);
-        }
+            transform: scale(0.96) translateY(0);
 
-        html[lang="en"] #multi-link-toggle-btn {
-            background-image: url('multi-link-en.png');
         }
 
         html[lang="he"] #multi-link-toggle-btn {
-            background-image: url('multi-link-he.png');
+            font-size: 0.9rem;
+        }
+
+        html[lang="en"] #multi-link-toggle-btn {
+            font-size: 0.85rem;
         }
 
         #download-btn-container {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
-        #download-btn {
-            border: none;
-            background-color: transparent;
-            background-image: url('download-button.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            height: 48px;
-            width: 110px;
-            cursor: pointer;
-            transition: filter 0.3s, transform 0.1s;
-        }
-
-        #download-btn:hover:not(:disabled) {
-            filter: brightness(1.15);
-        }
-
-        #download-btn:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-
-        #download-btn:disabled {
-            cursor: not-allowed;
-            filter: grayscale(1) opacity(0.5);
+        #download-btn:active:not(:disabled),
+        .video-btn:active:not(:disabled) {
+            transform: scale(0.97);
         }
 
         .dropdown {
             position: relative;
-            display: inline-block;
-        }
-
-        .video-btn {
-            height: 20px;
-            width: 70px;
-            padding: 0;
-            font-size: 0.8rem;
-            line-height: 20px;
-            font-family: 'Varela Round', sans-serif;
-            background-color: var(--color-dark);
-            color: var(--color-cream);
-            border: 1px solid #555;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
+            display: flex;
+            justify-content: center;
+            width: 100%;
         }
 
         .video-btn:hover:not(:disabled) {
             background-color: #444;
+            color: #fff;
             border-color: #777;
         }
 
+        #download-btn:disabled,
         .video-btn:disabled {
             cursor: not-allowed;
             opacity: 0.5;
+            box-shadow: none;
         }
 
         .dropdown-content {
             display: none;
             position: absolute;
-            background-color: #3e3e3e;
-            min-width: 180px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
-            z-index: 1;
-            border-radius: 5px;
+            background-color: #2a2a2a;
+            min-width: 200px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            border-radius: 10px;
+            border: 1px solid #444;
             list-style: none;
-            padding: 5px 0;
+            padding: 8px 0;
             top: 100%;
-            margin-top: 5px;
+            margin-top: 8px;
             left: 50%;
             transform: translateX(-50%);
+            overflow: hidden;
+        }
+
+        dropdown-content a:hover {
+            background-color: #383838;
+            color: #fff;
+            padding-left: 25px;
         }
 
         .dropdown-content a {
-            color: var(--color-cream);
-            padding: 10px 16px;
+            color: #ccc;
+            padding: 10px 20px;
             text-decoration: none;
             display: block;
             text-align: center;
-            transition: background-color 0.2s;
-            white-space: nowrap;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border-bottom: 1px solid #333;
         }
 
         .dropdown-content a:hover {
@@ -434,26 +431,6 @@
         .multi-link-buttons button,
         .multi-link-buttons .dropdown {
             width: 80%;
-        }
-
-        #multi-download-btn {
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            background-color: var(--color-blue);
-            color: white;
-        }
-
-        #multi-download-btn:hover {
-            filter: brightness(1.15);
-        }
-
-        #multi-video-btn {
-            height: auto;
-            width: 100%;
-            padding: 5px 15px;
         }
 
         #multi-cancel-btn {
@@ -755,23 +732,25 @@
             top: 25px;
             left: 25px;
             height: 42px;
-            width: auto;
-
+            width: 120px;
+            justify-content: center;
             display: flex;
             align-items: center;
             gap: 8px;
-
             background: rgba(44, 44, 44, 0.9);
             border: 2px solid var(--color-dark);
             border-radius: 25px;
-
             cursor: pointer;
             z-index: 100;
             color: var(--color-cream);
             padding: 0 15px;
 
-            transition: background 0.3s, border-color 0.3s, transform 0.2s;
+            transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s, border-color 0.3s, transform 0.2s;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        body.banner-active #settings-btn {
+            top: 75px;
         }
 
         #settings-btn:hover {
@@ -1127,42 +1106,101 @@
         #playlist-actions {
             display: flex;
             flex-direction: column;
+
             align-items: center;
-            gap: 10px;
+            gap: 7px;
+            position: sticky;
+            bottom: -25px;
+
+            margin-left: -25px;
+            margin-right: -25px;
+            margin-bottom: -25px;
             margin-top: 15px;
+
+            padding: 15px 0 34px 0;
+
+            background-color: #2c2c2c;
+            z-index: 50;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -10px 20px -5px rgba(0, 0, 0, 0.5);
         }
 
+        #playlist-actions .dropdown {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #playlist-video-btn {
+            margin: 5px auto 0 auto;
+            height: 32px;
+        }
+
+        #playlist-actions .dropdown-content {
+            top: auto;
+            bottom: 100%;
+
+            margin-top: 0;
+            margin-bottom: 8px;
+
+            box-shadow: 0px -10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        #download-btn,
+        #multi-download-btn,
         #playlist-download-btn {
             border: none;
-            background-color: transparent;
-            background-image: url('download-button.png');
+            background-image: none;
+            background-color: var(--color-blue);
+            color: #fff;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
 
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            height: 48px;
+            height: 44px;
+
+            margin-top: 3px;
+
+            margin-bottom: 3px;
             width: 130px;
-
+            border-radius: 8px;
             cursor: pointer;
-            transition: filter 0.3s, transform 0.1s;
-            margin: 0 auto;
-
-            display: block;
-        }
-
-        #playlist-download-btn:hover {
-            filter: brightness(1.15);
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         #playlist-download-btn:active {
             transform: scale(0.98);
         }
 
+        .video-btn,
+        #multi-video-btn,
         #playlist-video-btn {
+            height: 32px;
+            width: 130px !important;
+            padding: 0;
+            font-size: 0.9rem;
+            font-family: 'Varela Round', sans-serif;
+            background-color: #333;
+            color: #ddd;
+            border: 1px solid #555;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
 
-            width: 100px;
-            margin: 0 auto;
-            display: block;
+            margin: 4px auto 0 auto;
+
         }
 
         #playlist-actions .dropdown {
@@ -1214,10 +1252,819 @@
             width: 100%;
 
         }
+
+        .svg-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        #top-bookmark-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 46px;
+
+            background: rgba(30, 30, 30, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--color-cream);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+
+            z-index: 1000;
+            transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        #top-bookmark-banner.hidden {
+            top: -70px;
+        }
+
+        .banner-content {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        #banner-bookmarklet {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            background-color: rgba(234, 89, 77, 0.9);
+            background-image: url('icon.png');
+            background-size: 85%;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 6px;
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .banner-controls {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        html[dir="rtl"] .banner-controls {
+            left: 25px;
+        }
+
+        html[dir="ltr"] .banner-controls {
+            right: 25px;
+        }
+
+        .banner-controls label {
+            cursor: pointer;
+        }
+
+        #close-bookmark-banner {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #close-bookmark-banner:hover {
+            color: var(--color-red);
+            transform: scale(1.1);
+        }
+
+        #advanced-downloads-section {
+            width: 90%;
+            max-width: 800px;
+
+            margin: 30px auto 0 auto;
+        }
+
+        #bulk-actions-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(44, 44, 44, 0.85);
+            backdrop-filter: blur(5px);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            margin-bottom: 15px;
+        }
+
+        .toolbar-buttons button {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            color: #ccc;
+            cursor: pointer;
+            padding: 6px;
+            margin: 0 2px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toolbar-buttons button:hover {
+            background: #444;
+            color: var(--color-blue);
+            border-color: #555;
+        }
+
+        #bulk-delete-btn:hover {
+            color: var(--color-red);
+        }
+
+        .segmented-control {
+            display: flex;
+            position: relative;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 20px;
+            width: 140px;
+            height: 32px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .segmented-control .segment {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+
+            z-index: 2;
+            font-size: 0.8rem;
+            color: #888;
+            transition: color 0.3s;
+            user-select: none;
+        }
+
+        .segmented-control .segment.active {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .segmented-control .selection-slider {
+            position: absolute;
+            top: 2px;
+            bottom: 2px;
+            width: calc(50% - 4px);
+            background-color: var(--color-blue);
+            border-radius: 16px;
+            z-index: 1;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        html[dir="rtl"] .selection-slider {
+            right: 2px;
+        }
+
+        html[dir="rtl"] .segmented-control.simple-active .selection-slider {
+            transform: translateX(calc(-100% - 4px));
+        }
+
+        html[dir="ltr"] .selection-slider {
+            left: 2px;
+        }
+
+        html[dir="ltr"] .segmented-control.simple-active .selection-slider {
+            transform: translateX(calc(100% + 4px));
+        }
+
+        input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: transparent;
+            margin: 0;
+            font: inherit;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #777;
+            border-radius: 4px;
+            display: inline-grid;
+            place-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        input[type="checkbox"]::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #fff;
+            background-color: #fff;
+            transform-origin: bottom left;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: transparent;
+            border-color: var(--color-blue);
+        }
+
+        input[type="checkbox"]:checked::before {
+            transform: scale(1);
+        }
+
+        .switch input[type="checkbox"] {
+            display: none;
+        }
+
+        .dl-row {
+            background-color: rgba(44, 44, 44, 0.9);
+            border: 1px solid #555;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s;
+        }
+
+        .dl-row:hover {
+            border-color: var(--color-blue);
+        }
+
+        .dl-row-top {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .dl-thumb {
+            width: 50px !important;
+            height: 50px !important;
+            min-width: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+            background-color: #222;
+            border: 1px solid #444;
+        }
+
+        .dl-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            justify-content: center;
+        }
+
+        .dl-title {
+            font-size: 0.95rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Varela Round', sans-serif;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .dl-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .dl-quality-badge {
+            background-color: #555;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .dl-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dl-actions button {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            padding: 5px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dl-actions button:hover {
+            color: var(--color-red);
+            transform: scale(1.1);
+        }
+
+        .dl-progress-area {
+            margin-top: 12px;
+        }
+
+        .dl-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #ccc;
+            margin-top: 5px;
+            direction: ltr;
+
+            font-family: monospace;
+
+        }
+
+        .dl-title {
+            text-align: start;
+
+        }
+
+        @keyframes progress-stripes {
+            from {
+                background-position: 40px 0;
+            }
+
+            to {
+                background-position: 0 0;
+            }
+        }
+
+        .progress-bar.processing {
+            background-color: var(--color-blue) !important;
+            background-image: linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.15) 25%,
+                    transparent 25%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.15) 50%,
+                    rgba(255, 255, 255, 0.15) 75%,
+                    transparent 75%,
+                    transparent) !important;
+            background-size: 40px 40px !important;
+            animation: progress-stripes 1s linear infinite !important;
+            transition: none !important;
+
+        }
+
+        .dl-row {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dl-loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(30, 30, 30, 0.95);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.4s ease-out;
+        }
+
+        .dl-loading-text {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-top: 2px;
+            font-family: 'Varela Round', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .dl-actions {
+            position: relative;
+            z-index: 20;
+
+            display: flex;
+            gap: 5px;
+        }
+
+        .dl-action-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+        }
+
+        .dl-action-btn:hover {
+            background: #444;
+        }
+
+        #playlist-search-container {
+            position: relative;
+            margin: 10px 5px;
+        }
+
+        #playlist-search {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background-color: #222;
+            color: var(--color-cream);
+            font-size: 0.95rem;
+            font-family: 'Varela Round', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        #playlist-search:focus {
+            outline: none;
+            border-color: var(--color-blue);
+        }
+
+        #playlist-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #2a2a2a;
+            border: 1px solid #555;
+            border-radius: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            margin-top: 4px;
+        }
+
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #3c3c3c;
+            font-size: 0.9rem;
+            color: #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: background-color 0.2s;
+        }
+
+        .search-result-item:hover {
+            background-color: var(--color-blue);
+            color: #fff;
+        }
+
+        @keyframes blinkRow {
+
+            0%,
+            100% {
+                background-color: rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                background-color: rgba(77, 144, 179, 0.7);
+                box-shadow: 0 0 10px rgba(77, 144, 179, 0.5);
+            }
+        }
+
+        .row-blink {
+            animation: blinkRow 0.6s ease-in-out 3;
+
+        }
+
+        #history-btn {
+            position: fixed;
+            top: 80px;
+
+            left: 25px;
+            height: 42px;
+            width: 120px;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(44, 44, 44, 0.9);
+            border: 2px solid var(--color-dark);
+            border-radius: 25px;
+            cursor: pointer;
+            z-index: 100;
+            color: var(--color-cream);
+            padding: 0 15px;
+            transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s, border-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        body.banner-active #history-btn {
+            top: 130px;
+
+        }
+
+        #history-btn:hover {
+            background: #383838;
+            border-color: var(--color-blue);
+            transform: scale(1.05);
+        }
+
+        #history-btn svg {
+            transition: transform 0.5s;
+        }
+
+        #history-btn:hover svg {
+            transform: rotate(-90deg);
+        }
+
+        #history-sidebar {
+            position: fixed;
+            top: 0;
+            left: -350px;
+            width: 320px;
+            height: 100%;
+            background-color: #2c2c2c;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--color-blue);
+        }
+
+        #history-sidebar.open {
+            left: 0;
+        }
+
+        #close-history-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        #close-history-btn:hover {
+            color: var(--color-red);
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #333;
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .history-thumb {
+            width: 42px;
+            height: 42px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .history-info {
+            flex-grow: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-title {
+            font-size: 0.9rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        .history-open-btn {
+            background: transparent;
+            border: none;
+            color: var(--color-blue);
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .history-open-btn:hover {
+            transform: scale(1.2);
+            color: #5da0c4;
+        }
+
+        .history-pure-btn {
+            background: transparent;
+
+            border: none;
+
+            color: #999;
+            cursor: pointer;
+            padding: 2px 4px;
+
+            transition: transform 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-pure-btn:hover {
+            transform: scale(1.15);
+
+        }
+
+        .history-open-btn:hover {
+            color: var(--color-blue);
+        }
+
+        .history-delete-item-btn:hover {
+            color: var(--color-red);
+        }
+
+        .clear-history-styled-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: transparent;
+            border: 1px solid var(--color-red);
+            color: var(--color-red);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Varela Round', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-history-styled-btn:hover {
+            background-color: rgba(216, 90, 83, 0.1);
+            box-shadow: 0 0 10px rgba(216, 90, 83, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .clear-history-styled-btn:active {
+            transform: translateY(0);
+        }
+
+        html[lang="en"] .segmented-control .segment {
+            font-size: 0.7rem;
+
+        }
+
+        #main-bmc-link {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+
+            z-index: 100;
+            transition: transform 0.2s, filter 0.2s;
+            cursor: pointer;
+            filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.8)) drop-shadow(0px 0px 4px rgba(255, 255, 255, 0.4));
+        }
+
+        #main-bmc-link:hover {
+            transform: scale(1.08);
+
+            filter: drop-shadow(0px 0px 4px rgba(255, 255, 255, 1)) drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.7));
+        }
+
+        #main-bmc-link img {
+            height: 32px;
+
+            width: auto;
+            display: block;
+        }
+
+        .markdown-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 10px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #ddd;
+            text-align: start;
+        }
+
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3 {
+            color: var(--color-blue);
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        .markdown-body h1 {
+            font-size: 1.4rem;
+        }
+
+        .markdown-body h2 {
+            font-size: 1.2rem;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.1rem;
+            color: var(--color-cream);
+        }
+
+        .markdown-body ul,
+        .markdown-body ol {
+            padding-inline-start: 25px;
+            margin-bottom: 15px;
+        }
+
+        .markdown-body li {
+            margin-bottom: 8px;
+        }
+
+        .markdown-body strong {
+            color: #fff;
+        }
+
+        .markdown-body a {
+            color: var(--color-red);
+            text-decoration: none;
+        }
+
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-body code {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #f1c40f;
+        }
+
+        .markdown-body p {
+            margin-bottom: 15px;
+        }
+
+        .markdown-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .markdown-body::-webkit-scrollbar-track {
+            background: #222;
+            border-radius: 4px;
+        }
+
+        .markdown-body::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        .markdown-body::-webkit-scrollbar-thumb:hover {
+            background: var(--color-blue);
+        }
     </style>
 </head>
 
 <body>
+    <div id="top-bookmark-banner" class="hidden">
+        <div class="banner-content">
+            <span data-i18n="bookmark_info">כדי לשמור כסימניה, ניתן לגרור את האייקון הבא לסרגל הסימניות</span>
+            <a id="banner-bookmarklet" href="#"></a>
+        </div>
+        <div class="banner-controls">
+            <div class="checkbox-container">
+                <input type="checkbox" id="dont-show-bookmark-banner">
+                <label for="dont-show-bookmark-banner" data-i18n="dont_show_again">אל תציג הודעה זו שוב</label>
+            </div>
+            <button id="close-bookmark-banner">
+                <svg viewBox="0 0 24 24" class="svg-icon">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <button id="settings-btn" aria-label="Settings">
         <svg viewBox="0 0 24 24">
             <path
@@ -1225,6 +2072,39 @@
         </svg>
         <span data-i18n="settings_title" class="settings-text">הגדרות</span>
     </button>
+
+    <button id="history-btn" aria-label="History">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span data-i18n="history_title" class="settings-text">היסטוריה</span>
+    </button>
+
+    <a href="https://buymeacoffee.com/mps435" target="_blank" id="main-bmc-link" title="קנה לי קפה ☕">
+        <img src="bmc-brand-logo.svg" alt="Buy Me A Coffee">
+    </a>
+
+    <div id="history-sidebar">
+        <div class="sidebar-header">
+            <h2 data-i18n="history_title">היסטוריה</h2>
+            <button id="close-history-btn">✕</button>
+        </div>
+        <div class="sidebar-content" id="history-list"
+            style="gap: 12px; padding-bottom: 10px; overflow-y: auto; overflow-x: hidden;">
+        </div>
+        <div style="padding: 15px; border-top: 1px solid #444; text-align: center;">
+            <button id="clear-history-btn" class="clear-history-styled-btn" data-i18n-title="clear_history">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6">
+                    </path>
+                </svg>
+                <span data-i18n="clear_history">נקה היסטוריה</span>
+            </button>
+        </div>
+    </div>
 
     <div id="settings-sidebar">
         <div class="sidebar-header">
@@ -1235,7 +2115,14 @@
         <div class="sidebar-content">
             <div class="setting-row">
                 <div class="setting-label">
-                    <span class="setting-icon">🌐</span>
+                    <span class="setting-icon">
+                        <svg viewBox="0 0 24 24" class="svg-icon setting-icon">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path
+                                d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z">
+                            </path>
+                        </svg>
+                    </span>
                     <span data-i18n="language_label">שפה</span>
                 </div>
                 <select id="lang-select">
@@ -1247,7 +2134,11 @@
             <div class="setting-row clickable" id="dest-folder-row" style="cursor: pointer;">
                 <div style="flex-grow: 1; min-width: 0; margin-inline-end: 10px;">
                     <div class="setting-label">
-                        <span class="setting-icon">📂</span>
+                        <span class="setting-icon">
+                            <svg viewBox="0 0 24 24" class="svg-icon setting-icon">
+                                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"></path>
+                            </svg>
+                        </span>
                         <span data-i18n="dest_folder_label">תיקיית הורדה</span>
                     </div>
                     <div id="sidebar-dest-path"
@@ -1260,7 +2151,35 @@
 
             <div class="setting-row">
                 <div class="setting-label">
-                    <img src="netfree_ic.svg" alt="NetFree" class="setting-icon-img">
+                    <span class="setting-icon">
+                        <svg viewBox="0 0 24 24" class="svg-icon setting-icon">
+                            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"></path>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z">
+                            </path>
+                        </svg>
+                    </span>
+                    <span data-i18n="download_mode_label">תצוגה</span>
+                </div>
+
+                <div class="segmented-control" id="mode-segmented-control">
+                    <div class="selection-slider"></div>
+                    <div class="segment active" data-mode="advanced" data-i18n="mode_advanced">מתקדם</div>
+                    <div class="segment" data-mode="simple" data-i18n="mode_simple">פשוט</div>
+                </div>
+            </div>
+            <div class="setting-row">
+                <div class="setting-label">
+                    <span class="setting-icon">
+                        <svg viewBox="0 0 24 24" class="svg-icon setting-icon">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M5 10c2-1 4-1 6 1s4-2 8-4" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round"></path>
+                            <path d="M11 11c1 1.5 2 2 3 0" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round"></path>
+                        </svg>
+                    </span>
                     <span data-i18n="netfree_user">מצב תאימות - נטפרי</span>
                 </div>
                 <label class="switch">
@@ -1268,12 +2187,16 @@
                     <span class="slider"></span>
                 </label>
             </div>
-
             <hr style="border: 0; border-top: 1px solid #444; margin: 10px 0;">
 
             <div class="setting-row">
                 <div class="setting-label">
-                    <span class="setting-icon">🔍</span>
+                    <span class="setting-icon">
+                        <svg viewBox="0 0 24 24" class="svg-icon setting-icon">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                    </span>
                     <span data-i18n="resolution_label">גודל תצוגה</span>
                 </div>
                 <input type="range" id="resolution-slider" min="0.85" max="1.3" step="0.01" value="1"
@@ -1282,15 +2205,28 @@
 
             <div class="setting-row">
                 <div class="setting-label">
-                    <span class="setting-icon">🎨</span>
+                    <span class="setting-icon">
+                        <svg viewBox="0 0 24 24" class="svg-icon setting-icon">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"></path>
+                        </svg>
+                    </span>
                     <span data-i18n="bg_color_label">צבע רקע</span>
                 </div>
                 <input type="color" id="bg-color-picker" value="#222222">
             </div>
 
+            <input type="file" id="hidden-bg-file-input" accept="image/png, image/jpeg, image/webp, image/gif"
+                style="display: none;">
+
             <div class="setting-row clickable" id="bg-image-row" style="cursor: pointer;">
                 <div class="setting-label">
-                    <span class="setting-icon">🖼️</span>
+                    <span class="setting-icon">
+                        <svg viewBox="0 0 24 24" class="svg-icon setting-icon">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <path d="M21 15l-5-5L5 21"></path>
+                        </svg>
+                    </span>
                     <span data-i18n="bg_image_label">תמונת רקע</span>
                 </div>
                 <span style="font-size: 1.2rem;">ᐳ</span>
@@ -1316,10 +2252,7 @@
     </div>
 
     <div id="sidebar-overlay"></div>
-    </div>
-    </div>
 
-    <div id="sidebar-overlay"></div>
     <div id="update-notification" class="hidden">
         <p id="update-text"></p>
         <div class="update-buttons">
@@ -1335,8 +2268,8 @@
             <button id="close-update-btn" class="update-btn-secondary" data-i18n="close">סגור</button>
         </div>
     </div>
-    <header>
-        <img id="app-icon" alt="App Icon">
+
+    <header> <img id="app-icon" alt="App Icon">
         <h1 data-i18n="title">NFmp3Downloader</h1>
     </header>
 
@@ -1357,16 +2290,36 @@
                 </div>
             </div>
 
-            <div id="playlist-item-list">
+            <div id="playlist-search-container">
+                <input type="text" id="playlist-search" data-i18n-placeholder="search_playlist_placeholder">
+                <div id="playlist-search-results"></div>
             </div>
 
+            <div id="playlist-item-list">
+            </div>
             <div id="playlist-actions">
                 <div class="dropdown">
-                    <button id="playlist-download-btn"></button>
+                    <button id="playlist-download-btn">
+                        MP3
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
                     <div id="playlist-mp3-quality-dropdown" class="dropdown-content"></div>
                 </div>
                 <div class="dropdown">
-                    <button id="playlist-video-btn" class="video-btn">MP4 ⬇️</button>
+                    <button id="playlist-video-btn" class="video-btn">
+                        MP4
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
                     <div id="playlist-video-quality-dropdown" class="dropdown-content"></div>
                 </div>
             </div>
@@ -1378,11 +2331,19 @@
                     <div id="input-section">
                         <div class="input-wrapper">
                             <input type="url" id="youtube-url" data-i18n-placeholder="youtube_placeholder">
-                            <button id="multi-link-toggle-btn"></button>
+                            <button id="multi-link-toggle-btn" data-i18n="multi_link_btn"></button>
                         </div>
                         <div id="download-btn-container">
                             <div class="dropdown">
-                                <button id="download-btn" data-i18n-aria-label="download_btn_aria"></button>
+                                <button id="download-btn" data-i18n-aria-label="download_btn_aria">
+                                    MP3
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </button>
                                 <div id="mp3-quality-dropdown" class="dropdown-content">
                                     <a href="#" data-format="mp3_high" data-i18n="quality_mp3_high"></a>
                                     <a href="#" data-format="mp3_medium" data-i18n="quality_mp3_medium"></a>
@@ -1391,7 +2352,15 @@
                                 </div>
                             </div>
                             <div class="dropdown">
-                                <button id="video-btn" class="video-btn"></button>
+                                <button id="video-btn" class="video-btn">
+                                    MP4
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </button>
                                 <div id="video-quality-dropdown" class="dropdown-content">
                                     <a href="#" data-format="bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
                                         data-i18n="quality_best"></a>
@@ -1408,6 +2377,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -1416,11 +2386,27 @@
                     <textarea id="multi-link-area" data-i18n-placeholder="multi_link_placeholder"></textarea>
                     <div class="multi-link-buttons">
                         <div class="dropdown">
-                            <button id="multi-download-btn"></button>
+                            <button id="multi-download-btn">
+                                MP3
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
                             <div id="multi-mp3-quality-dropdown" class="dropdown-content"></div>
                         </div>
                         <div class="dropdown">
-                            <button id="multi-video-btn" class="video-btn"></button>
+                            <button id="multi-video-btn" class="video-btn">
+                                MP4
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
                             <div id="multi-video-quality-dropdown" class="dropdown-content"></div>
                         </div>
                         <button id="multi-cancel-btn" data-i18n="multi_cancel_btn"></button>
@@ -1438,6 +2424,7 @@
                 <div id="status-launching" class="status-message" style="display: none;">
                     <div class="spinner"></div><span data-i18n="launching"></span>
                 </div>
+
                 <div id="status-requesting" class="status-message" style="display: none;">
                     <div class="loading-dots">
                         <div></div>
@@ -1447,26 +2434,15 @@
                     <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button></div>
                 </div>
 
-                <div id="status-section">
-                    <div id="status-requesting" class="status-message" style="display: none;">
-                        <div class="loading-dots">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div><span data-i18n="requesting"></span>
-                        <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
-                        </div>
-                    </div>
-                    <div id="status-resolving-playlist" class="status-message" style="display: none;">
-                        <div class="loading-dots">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div><span data-i18n="resolving_playlist"></span>
-                        <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button>
-                        </div>
-                    </div>
+                <div id="status-resolving-playlist" class="status-message" style="display: none;">
+                    <div class="loading-dots">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div><span data-i18n="resolving_playlist"></span>
+                    <div class="cancel-btn-container"><button class="cancel-btn" data-i18n="cancel_btn"></button></div>
                 </div>
+
                 <div id="status-downloading" class="status-message" style="display: none;">
                     <div class="progress-bar-container">
                         <div id="progress-bar" class="progress-bar"></div>
@@ -1519,11 +2495,35 @@
                 </div>
             </div>
         </main>
+    </div>
 
-        <footer>
-            <p id="bookmark-info" data-i18n="bookmark_info"></p>
-            <a id="bookmarklet" href="#" data-i18n="bookmark_title"></a>
-        </footer>
+    <div id="advanced-downloads-section" style="display: none;">
+        <div id="bulk-actions-toolbar" style="display: none;">
+            <div class="toolbar-checkbox">
+                <input type="checkbox" id="select-all-downloads">
+            </div>
+            <div class="toolbar-buttons">
+                <button id="bulk-pause-btn" title="השהה נבחרים">
+                    <svg viewBox="0 0 24 24" class="svg-icon">
+                        <path d="M10 4H6v16h4V4zm8 0h-4v16h4V4z"></path>
+                    </svg>
+                </button>
+                <button id="bulk-resume-btn" title="המשך נבחרים">
+                    <svg viewBox="0 0 24 24" class="svg-icon">
+                        <path d="M5 3l14 9-14 9V3z"></path>
+                    </svg>
+                </button>
+                <button id="bulk-delete-btn" title="מחק נבחרים">
+                    <svg viewBox="0 0 24 24" class="svg-icon">
+                        <path
+                            d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="downloads-list">
+        </div>
     </div>
     <script>
         const allTranslations = {
@@ -1543,7 +2543,7 @@
                 "requesting": "Sending request to server...", "downloading": "Downloading...", "playlist_progress": "Downloading item {current} of {total}",
                 "merging": "Merging video and audio...", "processing": "Processing file... (adding thumbnail & metadata)", "update_check": "Possible error, checking for yt-dlp update...",
                 "updating": "updating yt-dlp...", "success_message": "The file is in your Downloads folder.", "download_another": "Download another file",
-                "error_message": "The download has failed.", "view_log": "View the log file", "try_again": "Try again", "youtube_placeholder": "https://www.youtube.com/watch?v=",
+                "error_message": "failed!.", "view_log": "View the log file", "try_again": "Try again", "youtube_placeholder": "https://www.youtube.com/watch?v=",
                 "download_btn_aria": "Download", "quality_best": "Best Quality (MP4)", "quality_1080p": "1080p (MP4)", "quality_720p": "720p (MP4)", "quality_480p": "480p (MP4)",
                 "playlist_confirm_mp3": "Playlist link detected.\n\nClick 'OK' to download the entire list.\nClick 'Cancel' to download only this single track.",
                 "playlist_confirm_video": "Playlist link detected.\n\nClick 'OK' to download the entire list as video files.\nClick 'Cancel' to download only this single video.",
@@ -1553,9 +2553,9 @@
                 "netfree_user": "NetFree Compatibility Mode", "no_internet_title": "No Internet Connection",
                 "no_internet_text": "The application requires an active internet connection to work. Please check your network settings.",
                 "invalid_url_list_alert": "Please enter at least one valid YouTube link.", "update_available": "New version available!",
-                "whats_new": "What's New?", "resolving_playlist": "Resolving playlist details",
-                "download": "Download", "playlist_title": "Select Videos to Download",
-                "select_all": "Select/Deselect All",
+                "whats_new": "What's New?", "resolving_playlist": "Resolving playlist details", "buy_me_coffee": "Buy me a coffee",
+                "download": "Download", "playlist_title": "Select Videos to Download", "download_mode_label": "View Mode", "mode_advanced": "Advanced", "mode_simple": "Simple",
+                "select_all": "Select/Deselect All", "search_playlist_placeholder": "Search playlist...",
                 "no_videos_selected_alert": "Please select at least one video to download.",
                 "dont_show_again": "Don't show this message again", "settings_title": "Settings",
                 "language_label": "Language", "netfree_warning_title": "Attention: Compatibility Mode",
@@ -1569,7 +2569,7 @@
                 "quality_original_video": "Original Format (Any)",
                 "netfree_error_msg": "Error: Connection blocked by NetFree (Error 418).",
                 "netfree_try_mode_btn": "Try NetFree Compatibility Mode", "bg_color_label": "Background Color", "bg_image_label": "Background Image", "reset_bg_label": "Reset Background", "dest_folder_label": "Download Folder", "resolution_label": "Zoom / Scale",
-
+                "history_title": "History", "clear_history": "Clear History", "no_history": "No history yet", "open_folder": "Open Folder",
                 "close": "Close"
 
             },
@@ -1579,7 +2579,7 @@
                 "multi_link_btn": "הורד קישורים מרובים",
                 "success_message_multi": "הקבצים נמצאים בתיקייה חדשה בתוך תיקיית ההורדות.",
                 "cancel_btn": "בטל", "resolving_playlist": "מפענח פרטי פלייליסט...",
-                "cancelled_message": "ההורדה בוטלה.",
+                "cancelled_message": "ההורדה בוטלה.", "search_playlist_placeholder": "חיפוש סרטון בפלייליסט...",
                 "queue_complete_perfect": "כל {total} הקבצים ירדו בהצלחה!",
                 "queue_complete_partial": "{success} מתוך {total} קבצים ירדו. {failed} נכשלו.",
                 "queue_complete_fail": "ההורדה של כל {total} הקבצים נכשלה.",
@@ -1596,7 +2596,7 @@
                 "invalid_url_alert": "אנא הזן קישור תקין מיוטיוב.", "bookmark_info": "כדי לשמור כסימניה, ניתן לגרור את האייקון הבא לסרגל הסימניות.",
                 "bookmark_title": "NFmp3Downloader", "multi_link_instructions": "הדבק קישור אחד מיוטיוב בכל שורה.", "multi_link_placeholder": "https://...\nhttps://...",
                 "multi_download_btn": "הורד הכל (MP3)", "multi_cancel_btn": "חזור", "invalid_url_list_alert": "אנא הזן לפחות קישור תקין אחד מיוטיוב.", "netfree_user": "מצב תאימות - נטפרי", "update_available": "גרסה חדשה זמינה!", "credits_rights": "© כל הזכויות שמורות ל-",
-                "credits_bugs": "למשוב ודיווח על באגים:", "no_internet_title": "אין חיבור לאינטרנט",
+                "credits_bugs": "למשוב ודיווח על באגים:", "no_internet_title": "אין חיבור לאינטרנט", "buy_me_coffee": "קנה לי קפה",
                 "no_internet_text": "התוכנה דורשת חיבור פעיל לאינטרנט כדי לעבוד. אנא בדוק את הגדרות הרשת שלך.",
                 "whats_new": "מה חדש?", "playlist_title": "בחר סרטונים להורדה",
                 "select_all": "בחר/בטל בחירת הכל",
@@ -1604,15 +2604,15 @@
                 "download": "הורד", "quality_mp3_high": "MP3 - איכות גבוהה",
                 "quality_mp3_medium": "MP3 - איכות בינונית",
                 "quality_mp3_low": "MP3 - איכות נמוכה",
-                "quality_original_audio": "שמע מקורי (Raw)",
+                "quality_original_audio": "שמע מקורי (Raw)", "download_mode_label": "תצוגה", "mode_advanced": "מתקדם", "mode_simple": "פשוט",
                 "quality_original_video": "פורמט מקורי (כל סוג)",
                 "dont_show_again": "אל תציג הודעה זו שוב", "netfree_warning_title": "שים לב: מצב תאימות",
                 "netfree_warning_text": "מצב זה מיועד בעיקר למשתמשי נטפרי הסובלים מבעיות הורדה (למשל גולשי בזק).<br><br>אם ההורדה עובדת לך כרגיל, <strong>מומלץ להשאיר אפשרות זו כבויה</strong> כדי לקבל מהירות מקסימלית.",
                 "netfree_dont_show": "אל תציג אזהרה זו שוב",
                 "netfree_close_btn": "הבנתי", "resolution_label": "גודל תצוגה",
-                "netfree_error_msg": "שגיאה: החיבור נחסם ע\"י NetFree (שגיאה 418).",
+                "netfree_error_msg": "שגיאה: החיבור נחסם ע\"י נטפרי (שגיאה 418).",
                 "netfree_try_mode_btn": "נסה להפעיל מצב תאימות-נטפרי", "bg_color_label": "צבע רקע", "bg_image_label": "תמונת רקע", "reset_bg_label": "אפס רקע", "dest_folder_label": "תיקיית הורדה",
-
+                "history_title": "היסטוריה", "clear_history": "נקה היסטוריה", "no_history": "אין היסטוריה עדיין", "open_folder": "פתח תיקייה",
                 "close": "סגור"
             }
         };
@@ -1631,8 +2631,25 @@
         }
         document.addEventListener('DOMContentLoaded', () => {
             let translations = {};
+            const bookmarkBanner = document.getElementById('top-bookmark-banner');
+            const closeBannerBtn = document.getElementById('close-bookmark-banner');
+            const dontShowBannerCheckbox = document.getElementById('dont-show-bookmark-banner');
+            const bannerBookmarklet = document.getElementById('banner-bookmarklet');
+            bannerBookmarklet.href = window.location.href;
+            if (localStorage.getItem('hideBookmarkBanner') !== 'true') {
+                setTimeout(() => {
+                    bookmarkBanner.classList.remove('hidden');
+                    document.body.classList.add('banner-active');
+                }, 1000);
+            }
 
-            function applyTranslations(lang) {
+            closeBannerBtn.addEventListener('click', () => {
+                if (dontShowBannerCheckbox.checked) {
+                    localStorage.setItem('hideBookmarkBanner', 'true');
+                }
+                bookmarkBanner.classList.add('hidden');
+                document.body.classList.remove('banner-active');
+            }); function applyTranslations(lang) {
                 translations = allTranslations[lang] || allTranslations['en'];
                 document.documentElement.lang = lang;
                 document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
@@ -1654,15 +2671,56 @@
                 const langSelect = document.getElementById('lang-select');
                 if (langSelect) {
                     langSelect.value = lang;
-                } document.getElementById('video-btn').textContent = "MP4 ⬇️";
-                document.getElementById('multi-video-btn').textContent = "MP4 ⬇️";
-                document.getElementById('multi-download-btn').textContent = translations.multi_download_btn;
+                }
                 localStorage.setItem('lang', lang);
-                document.getElementById('bookmarklet').href = window.location.href;
             }
 
             function initializeApp() {
                 let downloadedFileNames = [];
+                let activeAdvancedDownloads = {};
+                const segmentedControl = document.getElementById('mode-segmented-control');
+                const segments = segmentedControl.querySelectorAll('.segment');
+                const advancedDownloadsSection = document.getElementById('advanced-downloads-section');
+
+                const bulkToolbar = document.getElementById('bulk-actions-toolbar');
+                const downloadsList = document.getElementById('downloads-list');
+
+                let savedMode = localStorage.getItem('advancedDownloadMode');
+                let isAdvancedMode = savedMode === null ? true : (savedMode === 'true');
+                function updateToolbarVisibility() {
+                    if (downloadsList && downloadsList.children.length > 0) {
+                        bulkToolbar.style.display = 'flex';
+                    } else if (bulkToolbar) {
+                        bulkToolbar.style.display = 'none';
+                    }
+                }
+
+                function toggleAdvancedMode(isAdvanced) {
+                    isAdvancedMode = isAdvanced;
+
+                    localStorage.setItem('advancedDownloadMode', isAdvanced);
+
+                    segments.forEach(seg => seg.classList.remove('active'));
+                    if (isAdvanced) {
+                        segmentedControl.querySelector('[data-mode="advanced"]').classList.add('active');
+                        segmentedControl.classList.remove('simple-active');
+                        if (advancedDownloadsSection) advancedDownloadsSection.style.display = 'block';
+                        updateToolbarVisibility();
+                    } else {
+                        segmentedControl.querySelector('[data-mode="simple"]').classList.add('active');
+                        segmentedControl.classList.add('simple-active');
+                        if (advancedDownloadsSection) advancedDownloadsSection.style.display = 'none';
+                    }
+                }
+                toggleAdvancedMode(isAdvancedMode);
+                segments.forEach(segment => {
+                    segment.addEventListener('click', (e) => {
+
+                        const selectedMode = e.currentTarget.getAttribute('data-mode');
+                        toggleAdvancedMode(selectedMode === 'advanced');
+                    });
+                });
+
                 let currentPlaylistTitle = "";
                 const playlistSelectionView = document.getElementById('playlist-selection-view');
                 const selectAllCheckbox = document.getElementById('select-all-checkbox');
@@ -1745,23 +2803,101 @@
                 resolutionSlider.addEventListener('dblclick', () => {
                     resolutionSlider.value = '1';
                     applyZoom('1');
-                }); function applyBackground(type, value) {
+                });
+                const bgFileInput = document.getElementById('hidden-bg-file-input');
+                let currentBgObjectURL = null;
+
+                const dbPromise = new Promise((resolve, reject) => {
+
+                    const request = indexedDB.open("NFDownloaderDB", 2);
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains("settings")) {
+                            db.createObjectStore("settings");
+                        }
+                        if (!db.objectStoreNames.contains("history")) {
+
+                            db.createObjectStore("history", { keyPath: "id", autoIncrement: true });
+                        }
+                    };
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+                async function saveImageToDB(blob) {
+                    const db = await dbPromise;
+                    const tx = db.transaction("settings", "readwrite");
+                    tx.objectStore("settings").put(blob, "bgImage");
+                }
+
+                async function getImageFromDB() {
+                    const db = await dbPromise;
+                    return new Promise((resolve) => {
+                        const tx = db.transaction("settings", "readonly");
+                        const request = tx.objectStore("settings").get("bgImage");
+                        request.onsuccess = () => resolve(request.result);
+                        request.onerror = () => resolve(null);
+                    });
+                }
+
+                async function deleteImageFromDB() {
+                    const db = await dbPromise;
+                    const tx = db.transaction("settings", "readwrite");
+                    tx.objectStore("settings").delete("bgImage");
+                }
+                async function saveToHistoryDB(title, thumbnail, path) {
+                    if (!title || !path) return;
+                    const db = await dbPromise;
+                    const tx = db.transaction("history", "readwrite");
+                    tx.objectStore("history").add({ title, thumbnail, path, timestamp: Date.now() });
+                }
+
+                async function getHistoryDB() {
+                    const db = await dbPromise;
+                    return new Promise((resolve) => {
+                        const tx = db.transaction("history", "readonly");
+                        const request = tx.objectStore("history").getAll();
+                        request.onsuccess = () => {
+
+                            const sorted = request.result.sort((a, b) => b.timestamp - a.timestamp);
+                            resolve(sorted);
+                        };
+                    });
+                }
+
+                async function clearHistoryDB() {
+                    const db = await dbPromise;
+                    const tx = db.transaction("history", "readwrite");
+                    tx.objectStore("history").clear();
+                }
+
+                async function deleteHistoryItemDB(id) {
+                    const db = await dbPromise;
+                    const tx = db.transaction("history", "readwrite");
+                    tx.objectStore("history").delete(id);
+                }
+
+                function applyBackground(type, value) {
+
+                    if (currentBgObjectURL && type !== 'image') {
+                        URL.revokeObjectURL(currentBgObjectURL);
+                        currentBgObjectURL = null;
+                    }
+
                     if (type === 'color') {
                         document.body.style.backgroundImage = 'none';
                         document.body.style.backgroundColor = value;
                         localStorage.setItem('bgType', 'color');
                         localStorage.setItem('bgValue', value);
                         bgColorPicker.value = value;
-                    } else if (type === 'image') {
-                        const serverUrl = `http://localhost:9595/local-image?path=${encodeURIComponent(value)}&t=${Date.now()}`;
-                        document.body.style.backgroundColor = 'transparent';
-                        document.body.style.backgroundImage = `url('${serverUrl}')`;
+                    } else if (type === 'image' && value) {
+
+                        currentBgObjectURL = URL.createObjectURL(value);
+                        document.body.style.backgroundColor = 'var(--color-background)';
+                        document.body.style.backgroundImage = `url('${currentBgObjectURL}')`;
                         document.body.style.backgroundSize = 'cover';
                         document.body.style.backgroundPosition = 'center';
                         document.body.style.backgroundAttachment = 'fixed';
-
                         localStorage.setItem('bgType', 'image');
-                        localStorage.setItem('bgValue', value);
                     } else {
                         document.body.style.backgroundImage = '';
                         document.body.style.backgroundColor = 'var(--color-background)';
@@ -1772,28 +2908,45 @@
 
                     resetBgContainer.style.display = (type === 'default') ? 'none' : 'block';
                 }
-
-                const savedBgType = localStorage.getItem('bgType');
-                const savedBgValue = localStorage.getItem('bgValue');
-                if (savedBgType && savedBgValue) {
-                    applyBackground(savedBgType, savedBgValue);
-                } else {
-                    applyBackground('default', null);
+                async function initBackground() {
+                    const savedBgType = localStorage.getItem('bgType');
+                    if (savedBgType === 'color') {
+                        const savedBgValue = localStorage.getItem('bgValue');
+                        applyBackground('color', savedBgValue);
+                    } else if (savedBgType === 'image') {
+                        const blob = await getImageFromDB();
+                        if (blob) {
+                            applyBackground('image', blob);
+                        } else {
+                            applyBackground('default', null);
+                        }
+                    } else {
+                        applyBackground('default', null);
+                    }
                 }
 
-                bgColorPicker.addEventListener('input', (e) => {
+                initBackground();
+
+                bgColorPicker.addEventListener('input', async (e) => {
+                    await deleteImageFromDB();
                     applyBackground('color', e.target.value);
                 });
-
                 bgImageRow.addEventListener('click', () => {
-                    if (ws && ws.readyState === WebSocket.OPEN) {
-                        document.body.style.cursor = 'progress';
-                        bgImageRow.style.cursor = 'progress';
-
-                        ws.send(JSON.stringify({ type: 'select_background_image' }));
+                    bgFileInput.click();
+                });
+                bgFileInput.addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        await saveImageToDB(file);
+                        applyBackground('image', file);
                     }
+                    bgFileInput.value = '';
                 });
 
+                resetBgBtn.addEventListener('click', async () => {
+                    await deleteImageFromDB();
+                    applyBackground('default', null);
+                });
                 resetBgBtn.addEventListener('click', () => {
                     applyBackground('default', null);
                 });
@@ -1801,7 +2954,86 @@
                 settingsBtn.addEventListener('click', toggleSidebar);
                 closeSidebarBtn.addEventListener('click', toggleSidebar);
                 overlay.addEventListener('click', toggleSidebar);
+                const historySidebar = document.getElementById('history-sidebar');
+                const historyBtn = document.getElementById('history-btn');
+                const closeHistoryBtn = document.getElementById('close-history-btn');
+                const clearHistoryBtn = document.getElementById('clear-history-btn');
+                const historyList = document.getElementById('history-list');
 
+                async function renderHistoryUI() {
+                    historyList.innerHTML = '';
+                    const items = await getHistoryDB();
+                    if (items.length === 0) {
+                        historyList.innerHTML = `<div style="text-align:center; color:#aaa; margin-top:20px;">${translations.no_history || 'אין היסטוריה עדיין'}</div>`;
+                        return;
+                    }
+
+                    items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'history-item';
+                        const isHeb = /[\u0590-\u05FF]/.test(item.title);
+
+                        div.innerHTML = `
+    <img src="${item.thumbnail}" class="history-thumb" onerror="this.src='icon.png'">
+    <div class="history-info" style="direction: ${isHeb ? 'rtl' : 'ltr'}; text-align: ${isHeb ? 'right' : 'left'};">
+        <span class="history-title" title="${item.title.replace(/"/g, '&quot;')}">${item.title}</span>
+        <span style="font-size:0.7rem; color:#888; direction:ltr; text-align:left; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${item.path.replace(/"/g, '&quot;')}">${item.path}</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; align-items: center; justify-content: center;">
+        <button class="history-pure-btn history-open-btn" data-path="${item.path.replace(/"/g, '&quot;')}" title="${translations.open_folder || 'פתח תיקייה'}">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--color-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        </button>
+        <button class="history-pure-btn history-delete-item-btn" data-id="${item.id}" title="${translations.delete_item || 'מחק מהיסטוריה'}">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </button>
+    </div>
+`;
+
+                        div.querySelector('.history-open-btn').addEventListener('click', function () {
+                            if (ws && ws.readyState === WebSocket.OPEN) {
+                                ws.send(JSON.stringify({ type: 'open_folder', path: this.dataset.path }));
+                            }
+                        });
+                        div.querySelector('.history-delete-item-btn').addEventListener('click', async function () {
+                            const itemId = Number(this.dataset.id);
+                            await deleteHistoryItemDB(itemId);
+                            div.style.opacity = '0';
+                            setTimeout(() => {
+                                div.remove();
+                                if (historyList.children.length === 0) {
+                                    historyList.innerHTML = `<div style="text-align:center; color:#aaa; margin-top:20px;">${translations.no_history || 'אין היסטוריה עדיין'}</div>`;
+                                }
+                            }, 300);
+                        });
+
+                        historyList.appendChild(div);
+                    });
+                }
+
+                function toggleHistorySidebar() {
+                    historySidebar.classList.toggle('open');
+                    if (historySidebar.classList.contains('open')) {
+                        sidebar.classList.remove('open');
+                        overlay.classList.add('visible');
+                        renderHistoryUI();
+                    } else {
+                        overlay.classList.remove('visible');
+                    }
+                }
+
+                historyBtn.addEventListener('click', toggleHistorySidebar);
+                closeHistoryBtn.addEventListener('click', toggleHistorySidebar);
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('open');
+                    historySidebar.classList.remove('open');
+                    overlay.classList.remove('visible');
+                });
+
+                clearHistoryBtn.addEventListener('click', async () => {
+                    await clearHistoryDB();
+                    renderHistoryUI();
+                });
                 const currentLang = localStorage.getItem('lang') || 'en';
                 langSelect.value = currentLang;
 
@@ -1833,19 +3065,34 @@
                     }
                     netfreeWarningModal.classList.remove('visible');
                 });
+                const whatsNewModal = document.getElementById('whats-new-modal');
+                const closeWhatsNewBtn = document.getElementById('close-whats-new-btn');
+                const whatsNewContent = document.getElementById('whats-new-content');
+                const modalDownloadUpdateBtn = document.getElementById('modal-download-update-btn');
 
                 whatsNewBtn.addEventListener('click', () => {
                     if (latestReleaseNotes) {
                         const currentLang = localStorage.getItem('lang') || 'en';
-
                         const notesForLang = parseReleaseNotes(latestReleaseNotes, currentLang);
-
                         const formattedNotes = notesForLang.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n');
-
-                        alert(formattedNotes);
+                        whatsNewContent.style.direction = (currentLang === 'he') ? 'rtl' : 'ltr';
+                        if (typeof marked !== 'undefined') {
+                            whatsNewContent.innerHTML = marked.parse(formattedNotes);
+                        } else {
+                            whatsNewContent.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${formattedNotes}</pre>`;
+                        }
+                        modalDownloadUpdateBtn.href = document.getElementById('download-update-btn').href;
+                        whatsNewModal.classList.add('visible');
                     }
                 });
-
+                closeWhatsNewBtn.addEventListener('click', () => {
+                    whatsNewModal.classList.remove('visible');
+                });
+                whatsNewModal.addEventListener('click', (e) => {
+                    if (e.target === whatsNewModal) {
+                        whatsNewModal.classList.remove('visible');
+                    }
+                });
                 closeUpdateBtn.addEventListener('click', () => {
                     if (dontShowAgainCheckbox.checked) {
                         localStorage.setItem('dismissedUpdateVersion', latestVersionAvailable);
@@ -1854,15 +3101,17 @@
                     updateNotification.classList.remove('visible');
                 });
                 let lastDownloadWasQueue = false;
-
                 multiVideoDropdown.innerHTML = videoDropdown.innerHTML;
                 document.getElementById('multi-mp3-quality-dropdown').innerHTML = document.getElementById('mp3-quality-dropdown').innerHTML;
+                document.getElementById('playlist-video-quality-dropdown').innerHTML = videoDropdown.innerHTML;
+                document.getElementById('playlist-mp3-quality-dropdown').innerHTML = document.getElementById('mp3-quality-dropdown').innerHTML;
 
                 const statusMap = { connecting: document.getElementById('status-connecting'), launching: document.getElementById('status-launching'), requesting: document.getElementById('status-requesting'), resolving_playlist: document.getElementById('status-resolving-playlist'), downloading: document.getElementById('status-downloading'), playlist: document.getElementById('status-playlist'), merging: document.getElementById('status-merging'), processing: document.getElementById('status-processing'), update_check: document.getElementById('status-update-check'), updating: document.getElementById('status-updating'), success: document.getElementById('status-success'), error: document.getElementById('status-error'), cancelled: document.getElementById('status-cancelled'), queue_complete: document.getElementById('status-queue-complete') };
 
                 const APP_PROTOCOL = 'nfmp3downloader://start';
                 let ws;
-                let isInitialConnection = true;
+                let hasAttemptedLaunch = false;
+
                 function showStatus(statusKey) {
                     mainContent.style.display = 'none';
                     statusSection.style.display = 'block';
@@ -1872,6 +3121,7 @@
                         statusMap[statusKey].style.display = 'block';
                     }
                 }
+
                 function showMainContent() {
                     mainContent.style.display = 'block';
                     singleLinkSection.style.display = 'block';
@@ -1880,30 +3130,254 @@
                     videoDropdown.style.display = 'none';
                     multiVideoDropdown.style.display = 'none';
                 }
-                function handleInitialConnectionFailure() {
-                    if (!isInitialConnection) return;
-                    isInitialConnection = false;
-                    showStatus('launching');
-                    window.location.href = APP_PROTOCOL;
-                    setTimeout(() => { location.reload(); }, 2500);
+                let launchAttempted = false;
+                async function checkServerAlive() {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 500);
+                    try {
+
+                        await fetch('http://localhost:9595/', { signal: controller.signal, mode: 'no-cors' });
+                        clearTimeout(timeoutId);
+                        return true;
+                    } catch (error) {
+                        clearTimeout(timeoutId);
+                        return false;
+                    }
                 }
-                function connect() {
-                    showStatus('connecting');
+                async function tryConnectLoop() {
+                    showStatus('launching');
                     setAllButtonsDisabled(true);
-                    const connectionTimeout = setTimeout(() => { if (isInitialConnection) { if (ws) ws.close(); handleInitialConnectionFailure(); } }, 2000);
+
+                    const isAlive = await checkServerAlive();
+
+                    if (isAlive) {
+
+                        establishWebSocket();
+                    } else {
+
+                        if (!launchAttempted) {
+                            launchAttempted = true;
+                            window.location.href = APP_PROTOCOL;
+                        }
+                        setTimeout(tryConnectLoop, 1000);
+                    }
+                }
+                function establishWebSocket() {
                     ws = new WebSocket('ws://localhost:9595/ws');
-                    ws.onopen = () => { clearTimeout(connectionTimeout); isInitialConnection = false; resetUI(); };
-                    ws.onclose = () => { clearTimeout(connectionTimeout); if (isInitialConnection) handleInitialConnectionFailure(); setAllButtonsDisabled(true); };
-                    ws.onerror = () => { };
+
+                    ws.onopen = () => {
+                        launchAttempted = false;
+                        resetUI();
+
+                        const savedBgType = localStorage.getItem('bgType');
+                        const savedBgValue = localStorage.getItem('bgValue');
+                        if (savedBgType === 'image' && savedBgValue) {
+                            applyBackground('image', savedBgValue);
+                        }
+                    };
+
+                    ws.onclose = () => {
+
+                        setAllButtonsDisabled(true);
+                        setTimeout(tryConnectLoop, 1000);
+                    };
+
+                    ws.onerror = () => {
+
+                    };
+
                     ws.onmessage = (event) => {
                         try {
                             const data = JSON.parse(event.data);
-                            const { type, percent, speed, current, total, path } = data;
+                            const { type, percent, speed, current, total, path, downloadId } = data;
+
+                            console.log("WS Msg:", type, "| ID:", downloadId, "| %:", percent);
+                            if (downloadId && activeAdvancedDownloads[downloadId]) {
+                                const row = document.getElementById(`dl-row-${downloadId}`);
+                                if (!row) return;
+
+                                const statusText = document.getElementById(`dl-status-text-${downloadId}`);
+                                const progressBar = document.getElementById(`dl-progress-${downloadId}`);
+                                const percentText = document.getElementById(`dl-percent-${downloadId}`);
+                                const speedText = document.getElementById(`dl-speed-${downloadId}`);
+
+                                switch (type) {
+                                    case 'metadata':
+                                        document.getElementById(`dl-thumb-${downloadId}`).src = data.thumbnail || 'icon.png';
+                                        const titleEl = document.getElementById(`dl-title-${downloadId}`);
+                                        titleEl.textContent = data.title;
+                                        titleEl.title = data.title;
+                                        statusText.textContent = "מתחיל הורדה...";
+
+                                        activeAdvancedDownloads[downloadId].title = data.title;
+                                        activeAdvancedDownloads[downloadId].thumbnail = data.thumbnail;
+                                        const overlay = document.getElementById(`dl-overlay-${downloadId}`);
+                                        if (overlay) {
+                                            overlay.style.opacity = '0';
+                                            setTimeout(() => overlay.remove(), 400);
+                                        }
+                                        break;
+                                    case 'progress':
+                                        statusText.textContent = "מוריד...";
+                                        progressBar.classList.remove('processing');
+                                        progressBar.style.backgroundImage = 'none';
+                                        progressBar.style.width = percent + '%';
+                                        progressBar.style.backgroundColor = 'var(--color-blue)';
+                                        percentText.textContent = parseFloat(percent).toFixed(1) + '%';
+                                        speedText.textContent = speed || '';
+                                        break;
+                                    case 'merging':
+                                        statusText.textContent = "מאחד אודיו ווידאו...";
+                                        progressBar.style.width = '100%';
+                                        progressBar.classList.add('processing');
+                                        break;
+                                    case 'processing':
+                                        statusText.textContent = "מעבד קובץ...";
+                                        progressBar.style.width = '100%';
+                                        progressBar.classList.add('processing');
+                                        break;
+                                    case 'success':
+                                        const folderText = (document.documentElement.lang === 'he') ? "הושלם! נשמר ב:" : "Done! Saved to:";
+                                        const openTitle = (document.documentElement.lang === 'he') ? "פתח תיקייה" : "Open Folder";
+                                        const displayPath = path || localStorage.getItem('destinationPath') || "Downloads";
+
+                                        const savedTitle = activeAdvancedDownloads[downloadId].title || "סרטון ללא שם";
+                                        const savedThumb = activeAdvancedDownloads[downloadId].thumbnail || "icon.png";
+                                        saveToHistoryDB(savedTitle, savedThumb, displayPath); statusText.innerHTML = `
+                                            <span style="color: #2ecc71;">${folderText}</span>
+                                            <span dir="ltr" style="font-size:0.9em; color:#ccc; margin:0 4px;">${displayPath}</span>
+                                            <button class="open-folder-btn" data-path="${displayPath}" title="${openTitle}" style="background:transparent; border:none; cursor:pointer; vertical-align:middle; transition: transform 0.2s;">
+                                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--color-blue)" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                            </button>
+                                        `;
+                                        const folderBtn = statusText.querySelector('.open-folder-btn');
+                                        folderBtn.onmouseover = () => folderBtn.style.transform = 'scale(1.15)';
+                                        folderBtn.onmouseout = () => folderBtn.style.transform = 'scale(1)';
+                                        folderBtn.addEventListener('click', function () {
+                                            if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'open_folder', path: this.dataset.path }));
+                                        }); progressBar.classList.remove('processing');
+                                        progressBar.style.backgroundImage = 'none';
+                                        progressBar.style.width = '100%';
+                                        progressBar.style.backgroundColor = '#2ecc71';
+
+                                        const actionBtn = row.querySelector('.dl-cancel-btn');
+                                        actionBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#2ecc71" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                                        actionBtn.title = "הושלם";
+                                        actionBtn.style.cursor = "default";
+                                        actionBtn.disabled = true;
+                                        break;
+                                    case 'error':
+
+                                        const errOverlay = document.getElementById(`dl-overlay-${downloadId}`);
+                                        if (errOverlay) {
+                                            errOverlay.remove();
+                                        }
+                                        if (!activeAdvancedDownloads[downloadId].title) {
+                                            const videoUrl = activeAdvancedDownloads[downloadId].url;
+                                            const videoId = extractVideoIdFromUrl(videoUrl);
+
+                                            if (videoId) {
+                                                const thumbUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+                                                document.getElementById(`dl-thumb-${downloadId}`).src = thumbUrl;
+                                                activeAdvancedDownloads[downloadId].thumbnail = thumbUrl;
+
+                                                fetch(`https://noembed.com/embed?url=${encodeURIComponent(videoUrl)}`)
+                                                    .then(res => res.json())
+                                                    .then(fallbackData => {
+                                                        if (fallbackData && fallbackData.title) {
+                                                            const titleEl = document.getElementById(`dl-title-${downloadId}`);
+                                                            titleEl.textContent = fallbackData.title;
+                                                            titleEl.title = fallbackData.title;
+                                                            activeAdvancedDownloads[downloadId].title = fallbackData.title;
+                                                        }
+                                                    }).catch(e => console.log("Fallback metadata fetch failed"));
+                                            }
+                                        }
+                                        const isNetfreeBlocked = data.error && (data.error.includes("Blocked by NetFree") || data.error.includes("418"));
+
+                                        let baseErrorMsg = translations.error_message ? translations.error_message.replace(".", "") : "Error!";
+                                        if (baseErrorMsg.includes("ההורדה נכשלה")) baseErrorMsg = "שגיאה!";
+
+                                        let netfreeTag = (document.documentElement.lang === 'he') ? "(נטפרי)" : "(NetFree)";
+                                        let errorMsg = isNetfreeBlocked ? `${baseErrorMsg} ${netfreeTag}` : baseErrorMsg;
+
+                                        const detailsText = (document.documentElement.lang === 'he') ? "פרטים" : "Details";
+
+                                        statusText.innerHTML = `
+                                            <span style="color: var(--color-red); font-weight: bold;">${errorMsg}</span>
+                                            <span class="dl-error-details" style="font-size: 0.75rem; color: #aaa; text-decoration: underline; cursor: pointer; margin-inline-start: 6px; transition: color 0.2s;" title="פתח קובץ יומן (Log)">
+                                                ${detailsText}
+                                            </span>
+                                        `;
+
+                                        const detailsBtn = statusText.querySelector('.dl-error-details');
+                                        detailsBtn.onmouseover = () => detailsBtn.style.color = '#fff';
+                                        detailsBtn.onmouseout = () => detailsBtn.style.color = '#aaa';
+
+                                        detailsBtn.addEventListener('click', () => {
+                                            if (ws && ws.readyState === WebSocket.OPEN) {
+                                                ws.send(JSON.stringify({ type: 'open_log' }));
+                                            }
+                                        });
+
+                                        progressBar.classList.remove('processing');
+                                        progressBar.style.backgroundImage = 'none';
+                                        progressBar.style.backgroundColor = 'var(--color-red)';
+                                        const pauseBtn = row.querySelector('.dl-pause-btn');
+                                        if (pauseBtn) pauseBtn.style.display = 'none';
+                                        let retryBtn = row.querySelector('.dl-retry-btn');
+                                        if (!retryBtn) {
+                                            retryBtn = document.createElement('button');
+                                            retryBtn.className = 'dl-cancel-btn dl-action-btn dl-retry-btn';
+
+                                            row.querySelector('.dl-actions').insertBefore(retryBtn, row.querySelector('.dl-delete-btn'));
+                                        }
+
+                                        retryBtn.style.display = 'flex';
+
+                                        retryBtn.innerHTML = `
+                                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--color-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="23 4 23 10 17 10"></polyline>
+                                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                            </svg>
+                                        `;
+                                        retryBtn.title = (document.documentElement.lang === 'he') ? "נסה שוב" : "Try Again";
+
+                                        retryBtn.onclick = () => {
+                                            if (ws && ws.readyState === WebSocket.OPEN) {
+
+                                                const isNetfreeChecked = document.getElementById('netfree-toggle').checked;
+                                                activeAdvancedDownloads[downloadId].request.isNetfreeUser = isNetfreeChecked;
+                                                ws.send(JSON.stringify(activeAdvancedDownloads[downloadId].request));
+                                                retryBtn.style.display = 'none';
+                                                if (pauseBtn) {
+                                                    pauseBtn.style.display = 'flex';
+                                                    pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+                                                    pauseBtn.title = "השהה";
+                                                }
+
+                                                statusText.textContent = "מחדש חיבור...";
+                                                statusText.style.color = "#aaa";
+                                                progressBar.style.backgroundColor = "var(--color-blue)";
+                                                progressBar.style.width = "0%";
+                                                document.getElementById(`dl-percent-${downloadId}`).textContent = "0%";
+                                                document.getElementById(`dl-speed-${downloadId}`).textContent = "--";
+                                            }
+                                        }; break;
+                                    case 'cancelled':
+                                        statusText.textContent = "בוטל.";
+                                        statusText.style.color = '#aaa';
+                                        progressBar.classList.remove('processing');
+                                        progressBar.style.backgroundImage = 'none';
+                                        progressBar.style.backgroundColor = '#555';
+                                        break;
+                                }
+                                return;
+                            }
                             switch (type) {
                                 case 'destination_selected':
                                     document.body.style.cursor = 'default';
                                     if (destFolderRow) destFolderRow.style.cursor = 'pointer';
-
                                     if (path) {
                                         if (sidebarDestPath) {
                                             sidebarDestPath.textContent = path;
@@ -1912,42 +3386,21 @@
                                         localStorage.setItem('destinationPath', path);
                                     }
                                     break;
-
                                 case 'playlist_details':
-
                                     Object.values(statusMap).forEach(div => div.style.display = 'none');
-
                                     if (data.data && data.data.items && data.data.items.length > 0) {
-
                                         currentPlaylistTitle = data.data.title || "Unknown Playlist";
                                         renderPlaylistSelection(data.data.items);
-                                    }
-                                    if (data.data && data.data.items && data.data.items.length > 0) {
-
-                                        renderPlaylistSelection(data.data.items);
                                     } else {
-
                                         showStatus('error');
-
                                         const errorTextEl = document.getElementById('status-error').querySelector('span');
                                         if (errorTextEl && data.data && data.data.error) {
                                             errorTextEl.textContent = `${translations.error_message} (Details: ${data.data.error})`;
                                         }
                                     }
                                     break;
-
-                                case 'background_selected':
-                                    document.body.style.cursor = 'default';
-                                    const bgRow = document.getElementById('bg-image-row');
-                                    if (bgRow) bgRow.style.cursor = 'pointer';
-
-                                    if (data.path) {
-                                        applyBackground('image', data.path);
-                                    }
-                                    break;
                                 case 'starting': showStatus('requesting'); break;
                                 case 'progress':
-
                                     const isProcessing = statusMap.processing.style.display === 'block';
                                     const isMerging = statusMap.merging.style.display === 'block';
                                     if (!isProcessing && !isMerging) {
@@ -1955,24 +3408,21 @@
                                     }
                                     document.getElementById('progress-bar').style.width = percent + '%';
                                     document.getElementById('progress-text').textContent = `${translations.downloading} ${parseFloat(percent).toFixed(1)}% (${speed || ''})`;
-                                    break; case 'playlist_progress':
+                                    break;
+                                case 'playlist_progress':
                                     showStatus('playlist');
                                     const playlistTextEl = document.getElementById('playlist-progress-text');
                                     playlistTextEl.textContent = translations.playlist_progress.replace('{current}', current).replace('{total}', total);
                                     break;
                                 case 'metadata':
-
                                     mediaInfoContainer.style.display = 'flex';
                                     mediaThumb.src = data.thumbnail;
                                     mediaTitle.textContent = data.title;
                                     currentVideoTitle = data.title;
-                                    const hebrewRegex = /[\u0590-\u05FF]/;
-                                    const isHebrewTitle = hebrewRegex.test(data.title);
-
+                                    const isHebrewTitle = /[\u0590-\u05FF]/.test(data.title);
                                     if (isHebrewTitle) {
                                         mediaInfoContainer.style.direction = 'rtl';
                                         mediaTitle.style.textAlign = 'right';
-
                                     } else {
                                         mediaInfoContainer.style.direction = 'ltr';
                                         mediaTitle.style.textAlign = 'left';
@@ -1985,21 +3435,31 @@
                                 case 'success':
                                     showStatus('success');
                                     const successTextEl = document.getElementById('success-text');
-                                    let finalPath = data.path || localStorage.getItem('destinationPath') || "Downloads";
+                                    const finalPath = path || localStorage.getItem('destinationPath') || "Downloads";
+                                    saveToHistoryDB(currentVideoTitle || "סרטון יחיד", mediaThumb.src || "icon.png", finalPath);
+                                    const openFolderTitle = (document.documentElement.lang === 'he') ? "פתח תיקייה" : "Open Folder";
 
-                                    let msg = translations.success_message_custom.replace('{path}', finalPath);
+                                    let titleHtml = (currentVideoTitle && !lastDownloadWasQueue) ? `<strong>${currentVideoTitle}</strong><br>` : '';
 
-                                    if (currentVideoTitle && !lastDownloadWasQueue) {
-                                        successTextEl.innerHTML = `<strong>${currentVideoTitle}</strong><br><span style="font-size:0.9em; direction:ltr; display:block; margin-top:5px;">${finalPath}</span>`;
-                                    } else {
-                                        successTextEl.innerHTML = `<span style="direction:ltr;">${finalPath}</span>`;
-                                    }
-                                    break;
-                                case 'cancelled': showStatus('cancelled'); break;
-                                case 'netfree_error': case 'netfree_error':
+                                    successTextEl.innerHTML = `
+                                        ${titleHtml}
+                                        <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-top:10px; background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:8px; border:1px solid #555;">
+                                            <span style="font-size:0.9em; color:#ddd; direction:ltr; word-break:break-all;">${finalPath}</span>
+                                            <button class="simple-open-folder-btn" data-path="${finalPath}" title="${openFolderTitle}" style="background:var(--color-blue); border:none; border-radius:6px; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; transition: background 0.2s, transform 0.2s;">
+                                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                                            </button>
+                                        </div>
+                                    `;
+                                    const simpleFolderBtn = successTextEl.querySelector('.simple-open-folder-btn');
+                                    simpleFolderBtn.onmouseover = () => simpleFolderBtn.style.backgroundColor = '#5da0c4';
+                                    simpleFolderBtn.onmouseout = () => simpleFolderBtn.style.backgroundColor = 'var(--color-blue)';
+                                    simpleFolderBtn.addEventListener('click', function () {
+                                        if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'open_folder', path: this.dataset.path }));
+                                    });
+                                    break; case 'cancelled': showStatus('cancelled'); break;
+                                case 'netfree_error':
                                     showStatus('error');
                                     const errorDiv = document.getElementById('status-error');
-
                                     errorDiv.innerHTML = `
                                         ❌ ${translations.netfree_error_msg}<br>
                                         <div style="margin-top: 10px;">
@@ -2011,7 +3471,6 @@
                                             <button class="reset-btn" onclick="location.reload()">${translations.try_again}</button>
                                         </div>
                                     `;
-
                                     document.getElementById('open-netfree-settings').addEventListener('click', () => {
                                         toggleSidebar();
                                         const netfreeRow = document.querySelector('#netfree-toggle').closest('.setting-row');
@@ -2023,64 +3482,27 @@
                                 case 'queue_complete':
                                     showStatus('queue_complete');
                                     const { successCount, failureCount, successfulFiles } = data;
-
                                     const queueTotal = successCount + failureCount;
-
                                     const textEl = document.getElementById('queue-complete-text');
                                     const iconEl = document.getElementById('queue-complete-icon');
                                     const statusBox = document.getElementById('status-queue-complete');
                                     const showBtn = document.getElementById('show-files-btn');
 
-                                    let summaryMessage = "";
-
                                     if (failureCount === 0) {
                                         iconEl.textContent = '✅ ';
-                                        summaryMessage = translations.queue_complete_perfect.replace('{total}', queueTotal);
+                                        textEl.innerHTML = `<div>${translations.queue_complete_perfect.replace('{total}', queueTotal)}</div>`;
                                         statusBox.style.backgroundColor = 'rgba(46, 204, 113, 0.2)';
                                         statusBox.style.borderColor = '#2ecc71';
                                     } else if (successCount === 0) {
                                         iconEl.textContent = '❌ ';
-                                        summaryMessage = translations.queue_complete_fail.replace('{total}', queueTotal);
+                                        textEl.innerHTML = `<div>${translations.queue_complete_fail.replace('{total}', queueTotal)}</div>`;
                                         statusBox.style.backgroundColor = 'rgba(234, 89, 77, 0.2)';
                                         statusBox.style.borderColor = 'var(--color-red)';
                                     } else {
                                         iconEl.textContent = '⚠️ ';
-                                        summaryMessage = translations.queue_complete_partial
-                                            .replace('{success}', successCount)
-                                            .replace('{total}', queueTotal)
-                                            .replace('{failed}', failureCount);
+                                        textEl.innerHTML = `<div>${translations.queue_complete_partial.replace('{success}', successCount).replace('{total}', queueTotal).replace('{failed}', failureCount)}</div>`;
                                         statusBox.style.backgroundColor = 'rgba(241, 196, 15, 0.2)';
                                         statusBox.style.borderColor = '#f1c40f';
-                                    }
-                                    let pathHtml = "";
-                                    const queuePath = data.path || "";
-                                    if (queuePath) {
-                                        pathHtml = `<div style="font-size:0.85rem; color:#ccc; direction:ltr; margin-top:8px; word-break: break-all;">${queuePath}</div>`;
-                                    }
-
-                                    textEl.innerHTML = `<div>${summaryMessage}</div>${pathHtml}`;
-
-                                    const existingLogLink = statusBox.querySelector('.log-link-container');
-                                    if (existingLogLink) {
-                                        existingLogLink.remove();
-                                    }
-
-                                    if (failureCount > 0) {
-                                        const logLinkContainer = document.createElement('div');
-                                        logLinkContainer.className = 'log-link-container';
-                                        logLinkContainer.style.marginTop = "5px";
-                                        logLinkContainer.innerHTML = `<a href="#" id="log-link-multi" style="color:var(--color-cream); text-decoration:underline;">${translations.view_log}</a>`;
-                                        textEl.appendChild(logLinkContainer);
-
-                                        const newLogLink = document.getElementById('log-link-multi');
-                                        if (newLogLink) {
-                                            newLogLink.addEventListener('click', (e) => {
-                                                e.preventDefault();
-                                                if (ws && ws.readyState === WebSocket.OPEN) {
-                                                    ws.send(JSON.stringify({ type: 'open_log' }));
-                                                }
-                                            });
-                                        }
                                     }
 
                                     if (successfulFiles && successfulFiles.length > 0) {
@@ -2093,25 +3515,14 @@
                                     break;
                                 case 'update_available':
                                     const dismissedVersion = localStorage.getItem('dismissedUpdateVersion');
-                                    if (data.version === dismissedVersion) {
-                                        console.log(`Update ${data.version} was dismissed by the user. Not showing.`);
-                                        return;
-                                    }
-
+                                    if (data.version === dismissedVersion) return;
                                     latestVersionAvailable = data.version;
                                     latestReleaseNotes = data.releaseNotes;
-
                                     updateText.textContent = `${translations.update_available} (${latestVersionAvailable})`;
-                                    if (data.downloadUrl) {
-                                        const downloadBtn = document.getElementById('download-update-btn');
-                                        if (downloadBtn) {
-                                            downloadBtn.href = data.downloadUrl;
-                                        }
-                                    }
+                                    if (data.downloadUrl) document.getElementById('download-update-btn').href = data.downloadUrl;
                                     updateNotification.classList.remove('hidden');
                                     updateNotification.classList.add('visible');
                                     break;
-
                             }
                         } catch (e) { console.error("Failed to parse server message:", event.data, e); }
                     };
@@ -2124,6 +3535,119 @@
                     playlistSelectionView.style.display = 'none';
                     urlInput.focus();
                 }
+                function createAdvancedDownloadRow(id, url, isVideo, qualityText, originalRequest) {
+                    const row = document.createElement('div');
+                    row.className = 'dl-row';
+                    row.id = `dl-row-${id}`;
+                    row.dataset.url = url;
+                    activeAdvancedDownloads[id] = { url, type: isVideo ? 'video' : 'audio', request: originalRequest };
+
+                    const iconAudio = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>`;
+                    const iconVideo = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>`;
+
+                    const reqText = translations.requesting || "שולח בקשה לשרת...";
+
+                    row.innerHTML = `
+                        <div class="dl-loading-overlay" id="dl-overlay-${id}">
+                            <div class="loading-dots" style="margin-bottom: 2px; height: 20px;">
+                                <div></div><div></div><div></div>
+                            </div>
+                            <div class="dl-loading-text">${reqText}</div>
+                        </div>
+                        <div class="dl-row-top">
+                            <input type="checkbox" class="dl-checkbox" value="${id}">
+                            <img src="icon.png" class="dl-thumb" id="dl-thumb-${id}">
+                            <div class="dl-info">
+                                <div class="dl-title" id="dl-title-${id}" dir="auto" title="${url}">טוען נתונים...</div>
+                                <div class="dl-meta">
+                                    <span class="dl-type-icon">${isVideo ? iconVideo : iconAudio}</span>
+                                    <span class="dl-quality-badge">${qualityText}</span>
+                                    <span id="dl-status-text-${id}" style="color: #aaa; margin-inline-start: 5px;">ממתין...</span>
+                                </div>
+                            </div>
+                            <div class="dl-actions">
+                                <button class="dl-cancel-btn dl-action-btn dl-pause-btn" data-id="${id}" title="השהה">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                                </button>
+                                <button class="dl-cancel-btn dl-action-btn dl-delete-btn" data-id="${id}" title="בטל/מחק">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="dl-progress-area">
+                            <div class="progress-bar-container" style="margin: 0; height: 10px;">
+                                <div id="dl-progress-${id}" class="progress-bar" style="width: 0%; height: 10px;"></div>
+                            </div>
+                            <div class="dl-progress-text">
+                                <span id="dl-speed-${id}">--</span>
+                                <span id="dl-percent-${id}">0%</span>
+                            </div>
+                        </div>
+                    `;
+                    downloadsList.appendChild(row);
+                    updateToolbarVisibility();
+
+                    const pauseBtn = row.querySelector('.dl-pause-btn');
+                    let isPaused = false;
+
+                    pauseBtn.addEventListener('click', () => {
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            if (!isPaused) {
+                                ws.send(JSON.stringify({ type: 'pause_download_advanced', downloadId: id }));
+                                pauseBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
+                                pauseBtn.title = "המשך";
+                                document.getElementById(`dl-status-text-${id}`).textContent = "מושהה";
+                                document.getElementById(`dl-status-text-${id}`).style.color = "#f1c40f";
+                                isPaused = true;
+                            } else {
+                                ws.send(JSON.stringify(activeAdvancedDownloads[id].request));
+                                pauseBtn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
+                                pauseBtn.title = "השהה";
+                                document.getElementById(`dl-status-text-${id}`).textContent = "מחדש חיבור...";
+                                document.getElementById(`dl-status-text-${id}`).style.color = "#aaa";
+                                isPaused = false;
+                            }
+                        }
+                    });
+
+                    row.querySelector('.dl-delete-btn').addEventListener('click', () => {
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({ type: 'cancel_download_advanced', downloadId: id }));
+                        }
+                        row.remove();
+                        delete activeAdvancedDownloads[id];
+                        updateToolbarVisibility();
+                    });
+                }
+                document.getElementById('select-all-downloads').addEventListener('change', (e) => {
+                    document.querySelectorAll('.dl-checkbox').forEach(cb => cb.checked = e.target.checked);
+                });
+
+                document.getElementById('bulk-delete-btn').addEventListener('click', () => {
+                    document.querySelectorAll('.dl-checkbox:checked').forEach(cb => {
+                        const id = cb.value;
+                        if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'cancel_download_advanced', downloadId: id }));
+                        cb.closest('.dl-row').remove();
+                        delete activeAdvancedDownloads[id];
+                    });
+                    updateToolbarVisibility();
+                    document.getElementById('select-all-downloads').checked = false;
+                });
+
+                document.getElementById('bulk-pause-btn').addEventListener('click', () => {
+                    document.querySelectorAll('.dl-checkbox:checked').forEach(cb => {
+                        const pauseBtn = cb.closest('.dl-row').querySelector('.dl-pause-btn');
+                        if (pauseBtn && pauseBtn.title === "השהה") pauseBtn.click();
+                    });
+                });
+
+                document.getElementById('bulk-resume-btn').addEventListener('click', () => {
+                    document.querySelectorAll('.dl-checkbox:checked').forEach(cb => {
+                        const pauseBtn = cb.closest('.dl-row').querySelector('.dl-pause-btn');
+                        if (pauseBtn && pauseBtn.title === "המשך") pauseBtn.click();
+                    });
+                });
+
                 function resetUI() {
                     showMainContent();
                     setAllButtonsDisabled(false);
@@ -2144,26 +3668,51 @@
                     }
                     return trimmedUrl;
                 }
-                function renderPlaylistSelection(items) {
 
+                function extractVideoIdFromUrl(urlStr) {
+                    if (!urlStr) return null;
+                    let match = urlStr.match(/[?&]v=([^&]+)/);
+                    if (match) return match[1];
+                    match = urlStr.match(/youtu\.be\/([^?]+)/);
+                    if (match) return match[1];
+                    return null;
+                }
+
+                function renderPlaylistSelection(items) {
                     mainContent.style.display = 'none';
                     playlistSelectionView.style.display = 'block';
                     topBackBtn.style.display = 'block';
 
                     playlistItemList.innerHTML = '';
-                    playlistVideoBtn.textContent = "MP4 ⬇️";
-                    playlistMp3QualityDropdown.innerHTML = mp3Dropdown.innerHTML;
-                    playlistVideoQualityDropdown.innerHTML = videoDropdown.innerHTML;
-                    items.forEach(item => {
+                    const originalInputUrl = document.getElementById('youtube-url').value;
+                    const specificVideoId = extractVideoIdFromUrl(originalInputUrl);
+
+                    let hasSpecificVideoInList = false;
+                    if (specificVideoId) {
+                        const specificIndex = items.findIndex(item => extractVideoIdFromUrl(item.url) === specificVideoId);
+                        if (specificIndex !== -1) {
+                            hasSpecificVideoInList = true;
+                            const specificItem = items.splice(specificIndex, 1)[0];
+                            items.unshift(specificItem);
+                        }
+                    }
+                    items.forEach((item, index) => {
                         const div = document.createElement('div');
                         div.className = 'playlist-item';
+                        div.id = `playlist-row-${index}`;
+
                         const isHebrew = /[\u0590-\u05FF]/.test(item.title);
 
+                        let isChecked = true;
+                        if (hasSpecificVideoInList) {
+                            isChecked = (index === 0);
+                        }
+
                         div.innerHTML = `
-                        <input type="checkbox" class="video-checkbox" data-url="${item.url}" style="flex-shrink: 0;" checked>
-                        <img src="${item.thumbnail}" class="playlist-item-thumb" alt="thumbnail">
-                        <span class="playlist-item-title" style="direction: ${isHebrew ? 'rtl' : 'ltr'}; text-align: ${isHebrew ? 'right' : 'left'};" title="${item.title.replace(/"/g, '&quot;')}">${item.title}</span>
-                    `;
+        <input type="checkbox" class="video-checkbox" data-url="${item.url}" style="flex-shrink: 0;" ${isChecked ? 'checked' : ''}>
+        <img src="${item.thumbnail}" class="playlist-item-thumb" alt="thumbnail">
+        <span class="playlist-item-title" style="direction: ${isHebrew ? 'rtl' : 'ltr'}; text-align: ${isHebrew ? 'right' : 'left'};" title="${item.title.replace(/"/g, '&quot;')}">${item.title}</span>
+        `;
 
                         div.addEventListener('click', (e) => {
                             if (e.target.type !== 'checkbox') {
@@ -2174,9 +3723,65 @@
                         playlistItemList.appendChild(div);
                     });
 
-                    selectAllCheckbox.checked = true;
-                }
-                function setAllButtonsDisabled(disabled) {
+                    selectAllCheckbox.checked = !hasSpecificVideoInList;
+                    const searchInput = document.getElementById('playlist-search');
+                    const searchResults = document.getElementById('playlist-search-results');
+
+                    searchInput.value = '';
+                    searchResults.style.display = 'none';
+
+                    searchInput.oninput = (e) => {
+                        const query = e.target.value.toLowerCase().trim();
+                        searchResults.innerHTML = '';
+
+                        if (!query) {
+                            searchResults.style.display = 'none';
+                            return;
+                        }
+
+                        const filtered = items.map((item, idx) => ({ ...item, originalIndex: idx }))
+                            .filter(item => item.title.toLowerCase().includes(query));
+
+                        if (filtered.length === 0) {
+                            searchResults.style.display = 'none';
+                            return;
+                        }
+
+                        filtered.forEach(item => {
+                            const resultDiv = document.createElement('div');
+                            resultDiv.className = 'search-result-item';
+                            resultDiv.textContent = item.title;
+
+                            const isHeb = /[\u0590-\u05FF]/.test(item.title);
+                            resultDiv.style.direction = isHeb ? 'rtl' : 'ltr';
+                            resultDiv.style.textAlign = isHeb ? 'right' : 'left';
+
+                            resultDiv.onclick = () => {
+                                searchResults.style.display = 'none';
+                                const targetRow = document.getElementById(`playlist-row-${item.originalIndex}`);
+                                if (targetRow) {
+                                    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    targetRow.classList.remove('row-blink');
+                                    void targetRow.offsetWidth;
+                                    targetRow.classList.add('row-blink');
+                                }
+                            };
+                            searchResults.appendChild(resultDiv);
+                        });
+
+                        searchResults.style.display = 'block';
+                    };
+
+                    document.addEventListener('click', function closeSearch(e) {
+                        if (playlistSelectionView.style.display === 'none') {
+                            document.removeEventListener('click', closeSearch);
+                            return;
+                        }
+                        if (e.target !== searchInput && !searchResults.contains(e.target)) {
+                            searchResults.style.display = 'none';
+                        }
+                    });
+                } function setAllButtonsDisabled(disabled) {
                     [urlInput, downloadBtn, videoBtn, multiLinkToggleBtn, multiDownloadBtn, multiVideoBtn, multiCancelBtn].forEach(el => el.disabled = disabled);
                 }
 
@@ -2199,162 +3804,190 @@
                     topBackBtn.style.display = 'block';
                     multiLinkArea.focus();
                 });
+
+                const multiMp3Dropdown = document.getElementById('multi-mp3-quality-dropdown');
+
                 downloadBtn.addEventListener('click', () => {
                     videoDropdown.style.display = 'none';
                     mp3Dropdown.style.display = mp3Dropdown.style.display === 'block' ? 'none' : 'block';
                 });
 
-                mp3Dropdown.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (event.target.tagName !== 'A') return;
-
-                    const formatId = event.target.dataset.format;
-                    mp3Dropdown.style.display = 'none';
-                    const url = validateUrl(urlInput.value);
-                    if (!url) { alert(translations.invalid_url_alert); return; }
-
-                    let isPlaylist = false;
-                    if (url.includes('&list=') || url.includes('?list=')) {
-                        if (confirm(translations.playlist_confirm_mp3)) { isPlaylist = true; }
-                    }
-
-                    showStatus('requesting');
-                    setAllButtonsDisabled(true);
-
-                    const request = getDownloadRequestObject({ type: 'download', url: url, playlist: isPlaylist, formatId: formatId });
-                    ws.send(JSON.stringify(request));
-                });
-                videoDropdown.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (event.target.tagName !== 'A') return;
-
-                    lastDownloadWasQueue = false;
-                    const formatId = event.target.dataset.format;
-                    videoDropdown.style.display = 'none';
-                    const url = validateUrl(urlInput.value);
-                    if (!url) { alert(translations.invalid_url_alert); return; }
-                    let isPlaylist = false;
-                    if (url.includes('&list=') || url.includes('?list=')) {
-                        if (confirm(translations.playlist_confirm_video)) { isPlaylist = true; }
-                    }
-                    showStatus('requesting');
-                    setAllButtonsDisabled(true);
-                    const request = getDownloadRequestObject({ type: 'download_video', url: url, formatId: formatId, playlist: isPlaylist });
-                    ws.send(JSON.stringify(request));
-                });
-                const multiMp3Dropdown = document.getElementById('multi-mp3-quality-dropdown');
-                function startMultiDownload(formatId, isVideo) {
-                    const urls = multiLinkArea.value.split('\n')
-                        .map(url => validateUrl(url))
-                        .filter(url => url !== null);
-
-                    if (urls.length === 0) {
-                        alert(translations.invalid_url_list_alert); return;
-                    }
-
-                    lastDownloadWasQueue = true;
-                    showStatus('playlist');
-                    const playlistTextEl = document.getElementById('playlist-progress-text');
-                    playlistTextEl.textContent = translations.playlist_progress.replace('{current}', '1').replace('{total}', urls.length);
-
-                    setAllButtonsDisabled(true);
-
-                    const requestType = isVideo ? 'download_video' : 'download';
-                    const request = getDownloadRequestObject({ type: 'download_queue', urls: urls, formatId: formatId });
-                    ws.send(JSON.stringify(request));
-                }
-                multiVideoBtn.addEventListener('click', () => {
-
-                    multiMp3Dropdown.style.display = 'none';
-                    multiVideoDropdown.style.display =
-                        multiVideoDropdown.style.display === 'block' ? 'none' : 'block';
-                });
-                multiDownloadBtn.addEventListener('click', () => {
-                    multiVideoDropdown.style.display = 'none';
-                    multiMp3Dropdown.style.display = multiMp3Dropdown.style.display === 'block' ? 'none' : 'block';
-                });
-
-                multiMp3Dropdown.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (event.target.tagName === 'A') {
-                        const formatId = event.target.dataset.format;
-                        multiMp3Dropdown.style.display = 'none';
-                        startMultiDownload(formatId, false);
-                    }
-                });
-
-                multiVideoDropdown.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (event.target.tagName === 'A') {
-                        const formatId = event.target.dataset.format;
-                        multiVideoDropdown.style.display = 'none';
-                        startMultiDownload(formatId, true);
-                    }
-                });
-
-                videoDropdown.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (event.target.tagName === 'A') {
-                        lastDownloadWasQueue = false;
-                        const formatId = event.target.dataset.format;
-                        videoDropdown.style.display = 'none';
-                        const url = validateUrl(urlInput.value);
-                        if (!url) { alert(translations.invalid_url_alert); return; }
-                        let isPlaylist = false;
-                        if (url.includes('&list=') || url.includes('?list=')) { if (confirm(translations.playlist_confirm_video)) { isPlaylist = true; } }
-                        showStatus('requesting');
-                        setAllButtonsDisabled(true);
-                        const request = getDownloadRequestObject({ type: 'download_video', url: url, formatId: formatId, playlist: isPlaylist });
-                        ws.send(JSON.stringify(request));
-                    }
-                });
-
-                function startMultiDownload(formatId) {
-                    const urls = multiLinkArea.value.split('\n')
-                        .map(url => validateUrl(url))
-                        .filter(url => url !== null);
-
-                    if (urls.length === 0) {
-                        alert(translations.invalid_url_list_alert);
-                        return;
-                    }
-
-                    lastDownloadWasQueue = true;
-                    showStatus('playlist');
-                    const playlistTextEl = document.getElementById('playlist-progress-text');
-                    playlistTextEl.textContent = translations.playlist_progress.replace('{current}', '1').replace('{total}', urls.length);
-
-                    setAllButtonsDisabled(true);
-                    const request = getDownloadRequestObject({ type: 'download_queue', urls: urls, formatId: formatId });
-                    ws.send(JSON.stringify(request));
-                }
                 videoBtn.addEventListener('click', () => {
                     mp3Dropdown.style.display = 'none';
                     videoDropdown.style.display = videoDropdown.style.display === 'block' ? 'none' : 'block';
                 });
 
-                const goBackToMain = () => {
+                multiDownloadBtn.addEventListener('click', () => {
+                    multiVideoDropdown.style.display = 'none';
+                    multiMp3Dropdown.style.display = multiMp3Dropdown.style.display === 'block' ? 'none' : 'block';
+                });
 
+                multiVideoBtn.addEventListener('click', () => {
+                    multiMp3Dropdown.style.display = 'none';
+                    multiVideoDropdown.style.display = multiVideoDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+
+                playlistDownloadBtn.addEventListener('click', () => {
+                    playlistVideoQualityDropdown.style.display = 'none';
+                    playlistMp3QualityDropdown.style.display = playlistMp3QualityDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+
+                playlistVideoBtn.addEventListener('click', () => {
+                    playlistMp3QualityDropdown.style.display = 'none';
+                    playlistVideoQualityDropdown.style.display = playlistVideoQualityDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                function formatQualityText(text, isVideo) {
+                    if (!text) return isVideo ? "MP4" : "MP3";
+                    return isVideo ? "MP4: " + text.replace(' (MP4)', '') : text.replace(' - ', ': ');
+                }
+                mp3Dropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName !== 'A') return;
+                    mp3Dropdown.style.display = 'none';
+                    startSingleDownload(event.target.dataset.format, false, event.target.innerText);
+                });
+
+                videoDropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName !== 'A') return;
+                    videoDropdown.style.display = 'none';
+                    startSingleDownload(event.target.dataset.format, true, event.target.innerText);
+                });
+
+                function startSingleDownload(formatId, isVideo, qualityText) {
+                    const url = validateUrl(urlInput.value);
+                    if (!url) { alert(translations.invalid_url_alert); return; }
+
+                    let isPlaylist = url.includes('&list=') || url.includes('?list=');
+                    if (isPlaylist && !confirm(isVideo ? translations.playlist_confirm_video : translations.playlist_confirm_mp3)) {
+                        isPlaylist = false;
+                    }
+
+                    if (isAdvancedMode) {
+                        const downloadId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                        const request = getDownloadRequestObject({
+                            type: isVideo ? 'download_video_advanced' : 'download_advanced',
+                            downloadId: downloadId, url: url, playlist: isPlaylist, formatId: formatId
+                        });
+                        createAdvancedDownloadRow(downloadId, url, isVideo, formatQualityText(qualityText, isVideo), request);
+                        ws.send(JSON.stringify(request));
+                        urlInput.value = '';
+                    } else {
+                        showStatus('requesting');
+                        setAllButtonsDisabled(true);
+                        const request = getDownloadRequestObject({
+                            type: isVideo ? 'download_video' : 'download',
+                            url: url, playlist: isPlaylist, formatId: formatId
+                        });
+                        ws.send(JSON.stringify(request));
+
+                        urlInput.value = '';
+                    }
+                }
+                multiMp3Dropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName === 'A') {
+                        multiMp3Dropdown.style.display = 'none';
+                        startMultiDownload(event.target.dataset.format, false, event.target.innerText);
+                    }
+                });
+
+                multiVideoDropdown.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (event.target.tagName === 'A') {
+                        multiVideoDropdown.style.display = 'none';
+                        startMultiDownload(event.target.dataset.format, true, event.target.innerText);
+                    }
+                });
+
+                function startMultiDownload(formatId, isVideo, rawQualityText) {
+                    const urls = multiLinkArea.value.split('\n').map(url => validateUrl(url)).filter(url => url !== null);
+                    if (urls.length === 0) { alert(translations.invalid_url_list_alert); return; }
+
+                    if (isAdvancedMode) {
+                        urls.slice().reverse().forEach(url => {
+                            const downloadId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                            const request = getDownloadRequestObject({
+                                type: isVideo ? 'download_video_advanced' : 'download_advanced',
+                                downloadId: downloadId, url: url, formatId: formatId
+                            });
+                            createAdvancedDownloadRow(downloadId, url, isVideo, formatQualityText(rawQualityText, isVideo), request);
+                            ws.send(JSON.stringify(request));
+                        });
+                        multiLinkArea.value = '';
+                        goBackToMain();
+                    } else {
+                        lastDownloadWasQueue = true;
+                        showStatus('playlist');
+                        document.getElementById('playlist-progress-text').textContent = translations.playlist_progress.replace('{current}', '1').replace('{total}', urls.length);
+                        setAllButtonsDisabled(true);
+                        const request = getDownloadRequestObject({ type: 'download_queue', urls: urls, formatId: formatId });
+                        ws.send(JSON.stringify(request));
+                    }
+                }
+                playlistMp3QualityDropdown.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (e.target.tagName === 'A') {
+                        playlistMp3QualityDropdown.style.display = 'none';
+                        startPlaylistDownload(e.target.dataset.format, false, e.target.innerText);
+                    }
+                });
+
+                playlistVideoQualityDropdown.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (e.target.tagName === 'A') {
+                        playlistVideoQualityDropdown.style.display = 'none';
+                        startPlaylistDownload(e.target.dataset.format, true, e.target.innerText);
+                    }
+                });
+
+                function startPlaylistDownload(formatId, isVideo, qualityText) {
+                    const selectedUrls = [];
+                    document.querySelectorAll('.video-checkbox:checked').forEach(cb => { selectedUrls.push(cb.dataset.url); });
+                    if (selectedUrls.length === 0) { alert(translations.no_videos_selected_alert || "Please select at least one video."); return; }
+
+                    if (isAdvancedMode) {
+                        playlistSelectionView.style.display = 'none';
+                        topBackBtn.style.display = 'none';
+                        mainContent.style.display = 'block';
+
+                        selectedUrls.slice().reverse().forEach(url => {
+                            const downloadId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                            const request = getDownloadRequestObject({
+                                type: isVideo ? 'download_video_advanced' : 'download_advanced',
+                                downloadId: downloadId, url: url, formatId: formatId,
+                                playlistTitle: currentPlaylistTitle
+                            });
+                            createAdvancedDownloadRow(downloadId, url, isVideo, formatQualityText(qualityText, isVideo), request);
+                            ws.send(JSON.stringify(request));
+                        });
+                    } else {
+                        playlistSelectionView.style.display = 'none';
+                        topBackBtn.style.display = 'none';
+                        if (selectedUrls.length > 1) { showStatus('playlist'); } else { showStatus('requesting'); }
+                        const request = {
+                            type: 'download_queue', urls: selectedUrls, formatId: formatId,
+                            destinationPath: localStorage.getItem('destinationPath'),
+                            isNetfreeUser: document.getElementById('netfree-toggle').checked,
+                            playlistTitle: currentPlaylistTitle, language: localStorage.getItem('lang') || 'en'
+                        };
+                        ws.send(JSON.stringify(request));
+                    }
+
+                }
+
+                const goBackToMain = () => {
                     multiLinkSection.style.display = 'none';
                     playlistSelectionView.style.display = 'none';
                     mainContent.style.display = 'block';
                     singleLinkSection.style.display = 'block';
                     topBackBtn.style.display = 'none';
-
                     urlInput.value = '';
                     urlInput.focus();
                 };
+
                 multiCancelBtn.addEventListener('click', goBackToMain);
                 topBackBtn.addEventListener('click', goBackToMain);
-                multiVideoDropdown.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (event.target.tagName === 'A') {
-                        const formatId = event.target.dataset.format;
-                        multiVideoDropdown.style.display = 'none';
-                        startMultiDownload(formatId);
-                    }
-                });
-
                 if (destFolderRow) {
                     destFolderRow.addEventListener('click', () => {
                         if (ws && ws.readyState === WebSocket.OPEN) {
@@ -2402,7 +4035,7 @@
                 selectAllCheckbox.addEventListener('change', (e) => {
                     document.querySelectorAll('.video-checkbox').forEach(cb => cb.checked = e.target.checked);
                 });
-                function startPlaylistDownload(formatId) {
+                function startPlaylistDownload(formatId, isVideo, qualityText) {
                     const selectedUrls = [];
                     document.querySelectorAll('.video-checkbox:checked').forEach(cb => {
                         selectedUrls.push(cb.dataset.url);
@@ -2412,52 +4045,50 @@
                         alert(translations.no_videos_selected_alert || "Please select at least one video to download.");
                         return;
                     }
-                    playlistSelectionView.style.display = 'none';
-                    topBackBtn.style.display = 'none';
-                    if (selectedUrls.length > 1) {
-                        showStatus('playlist');
+
+                    if (isAdvancedMode) {
+                        playlistSelectionView.style.display = 'none';
+                        topBackBtn.style.display = 'none';
+                        mainContent.style.display = 'block';
+
+                        selectedUrls.slice().reverse().forEach(url => {
+                            const downloadId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+                            const request = getDownloadRequestObject({
+                                type: isVideo ? 'download_video_advanced' : 'download_advanced',
+                                downloadId: downloadId,
+                                url: url,
+                                formatId: formatId,
+                                playlistTitle: currentPlaylistTitle
+                            });
+
+                            let displayQuality = isVideo
+                                ? "MP4: " + (qualityText ? qualityText.replace(' (MP4)', '') : "")
+                                : (qualityText ? qualityText.replace(' - ', ': ') : "MP3");
+
+                            createAdvancedDownloadRow(downloadId, url, isVideo, displayQuality, request);
+                            ws.send(JSON.stringify(request));
+                        });
                     } else {
-                        showStatus('requesting');
+                        playlistSelectionView.style.display = 'none';
+                        topBackBtn.style.display = 'none';
+
+                        if (selectedUrls.length > 1) { showStatus('playlist'); } else { showStatus('requesting'); }
+
+                        const destinationPath = localStorage.getItem('destinationPath');
+                        const isNetfree = document.getElementById('netfree-toggle').checked;
+                        const currentLang = localStorage.getItem('lang') || 'en';
+
+                        ws.send(JSON.stringify({
+                            type: 'download_queue', urls: selectedUrls, formatId: formatId,
+                            destinationPath: destinationPath, isNetfreeUser: isNetfree,
+                            playlistTitle: currentPlaylistTitle, language: currentLang
+                        }));
                     }
 
-                    const destinationPath = localStorage.getItem('destinationPath');
-                    const isNetfree = document.getElementById('netfree-toggle').checked;
-                    const currentLang = localStorage.getItem('lang') || 'en';
+                    urlInput.value = '';
 
-                    ws.send(JSON.stringify({
-                        type: 'download_queue',
-                        urls: selectedUrls,
-                        formatId: formatId,
-                        destinationPath: destinationPath,
-                        isNetfreeUser: isNetfree,
-                        playlistTitle: currentPlaylistTitle,
-                        language: currentLang
-                    }));
                 }
-                playlistDownloadBtn.addEventListener('click', () => {
-                    playlistMp3QualityDropdown.style.display = playlistMp3QualityDropdown.style.display === 'block' ? 'none' : 'block';
-                    playlistVideoQualityDropdown.style.display = 'none';
-                });
-
-                playlistMp3QualityDropdown.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (e.target.tagName === 'A') {
-                        startPlaylistDownload(e.target.dataset.format);
-                        playlistMp3QualityDropdown.style.display = 'none';
-                    }
-                });
-                playlistVideoBtn.addEventListener('click', () => {
-                    playlistVideoQualityDropdown.style.display = playlistVideoQualityDropdown.style.display === 'block' ? 'none' : 'block';
-                    playlistMp3QualityDropdown.style.display = 'none';
-                });
-
-                playlistVideoQualityDropdown.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (e.target.tagName === 'A') {
-                        startPlaylistDownload(e.target.dataset.format);
-                        playlistVideoQualityDropdown.style.display = 'none';
-                    }
-                });
                 const noInternetModal = document.getElementById('no-internet-modal');
                 const tryAgainInternetBtn = document.getElementById('try-again-internet-btn');
 
@@ -2486,7 +4117,7 @@
                     }
                 });
                 handleConnectionChange();
-                connect();
+                tryConnectLoop();
             }
             const initialLang = localStorage.getItem('lang') || (navigator.language.startsWith('he') ? 'he' : 'en');
             applyTranslations(initialLang);
@@ -2509,7 +4140,6 @@
             </div>
         </div>
     </div>
-    <!-- מודל אין אינטרנט -->
     <div id="no-internet-modal" class="custom-modal hidden" style="backdrop-filter: blur(5px);">
         <div class="modal-content" style="border-color: var(--color-red);">
             <h3 style="color: var(--color-red);" data-i18n="no_internet_title">No Internet Connection</h3>
@@ -2520,6 +4150,24 @@
             </div>
         </div>
     </div>
+
+    <div id="whats-new-modal" class="custom-modal hidden">
+        <div class="modal-content"
+            style="max-width: 600px; width: 90%; max-height: 85vh; display: flex; flex-direction: column; padding: 20px;">
+            <h3 data-i18n="whats_new" style="margin-top: 0;">מה חדש?</h3>
+
+            <div id="whats-new-content" class="markdown-body">
+            </div>
+
+            <div class="modal-footer"
+                style="display: flex; flex-direction: row; justify-content: center; gap: 15px; border-top: 1px solid #444; padding-top: 15px; margin-top: 15px;">
+                <a href="#" target="_blank" id="modal-download-update-btn" class="update-btn-main" data-i18n="download"
+                    style="text-decoration: none;">הורד עכשיו</a>
+                <button id="close-whats-new-btn" class="update-btn-secondary" data-i18n="close">סגור</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

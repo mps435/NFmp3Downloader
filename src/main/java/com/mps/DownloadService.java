@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,10 @@ public class DownloadService {
     private static final Logger logger = LoggerFactory.getLogger(DownloadService.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final ExecutorService downloadExecutor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService advancedDownloadExecutor = Executors.newFixedThreadPool(4);
+
+    private static final ConcurrentHashMap<String, AdvancedContext> advancedDownloadsMap = new ConcurrentHashMap<>();
+
     private static final Pattern progressPattern = Pattern
             .compile("\\[download\\]\\s+([0-9.]+)%\\s+of\\s+.*?\\s+at\\s+(.*?\\/s)");
     private static final Pattern playlistProgressPattern = Pattern
@@ -72,12 +77,37 @@ public class DownloadService {
     }
 
     static {
+
+        new Thread(() -> {
+            try {
+                Path downloadsDir = Paths.get(System.getProperty("user.home"), "Downloads");
+                if (Files.exists(downloadsDir)) {
+                    try (java.util.stream.Stream<Path> stream = Files.list(downloadsDir)) {
+                        stream.filter(Files::isDirectory)
+                                .filter(p -> p.getFileName().toString().startsWith(".NFDownloader_"))
+                                .forEach(p -> {
+                                    logger.info("Startup sweep: Found orphaned temp directory. Deleting: {}", p);
+                                    deleteDirectoryRecursively(p);
+                                });
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Failed to run startup sweep for orphaned temp folders", e);
+            }
+        }).start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Path path = currentTempDirRef.get();
             if (path != null && Files.exists(path)) {
-                System.out.println("App is shutting down. Force cleaning temp dir: " + path);
+                logger.info("App shutting down. Cleaning single temp dir: {}", path);
                 deleteDirectoryRecursively(path);
             }
+
+            advancedDownloadsMap.values().forEach(ctx -> {
+                if (ctx.tempDir != null && Files.exists(ctx.tempDir)) {
+                    logger.info("App shutting down. Cleaning advanced temp dir: {}", ctx.tempDir);
+                    deleteDirectoryRecursively(ctx.tempDir);
+                }
+            });
         }));
     }
 
@@ -652,6 +682,212 @@ public class DownloadService {
         }
 
         logger.error("Gave up deleting directory after multiple attempts: {}", path);
+    }
+
+    public static void cancelAdvancedDownload(String downloadId) {
+        AdvancedContext ctx = advancedDownloadsMap.get(downloadId);
+        if (ctx != null) {
+
+            boolean wasPaused = ctx.pauseRequested.get() && (ctx.process == null || !ctx.process.isAlive());
+
+            ctx.cancellationRequested.set(true);
+            ctx.pauseRequested.set(false);
+
+            if (ctx.process != null && ctx.process.isAlive()) {
+                logger.info("Cancelling active advanced download {}", downloadId);
+                killProcessTree(ctx.process);
+            }
+            if (wasPaused && ctx.tempDir != null) {
+                logger.info("Cleaning up temp folder for a PAUSED download that was cancelled: {}", ctx.tempDir);
+                deleteDirectoryRecursively(ctx.tempDir);
+                advancedDownloadsMap.remove(downloadId);
+            }
+        }
+    }
+
+    public static void pauseAdvancedDownload(String downloadId) {
+        AdvancedContext ctx = advancedDownloadsMap.get(downloadId);
+        if (ctx != null) {
+            ctx.pauseRequested.set(true);
+            ctx.cancellationRequested.set(true);
+            if (ctx.process != null && ctx.process.isAlive()) {
+                logger.info("Pausing advanced download {}", downloadId);
+                killProcessTree(ctx.process);
+            }
+        }
+    }
+
+    public static void startAdvancedDownload(String downloadId, String youtubeUrl, String formatId, String destinationPath, boolean isNetfree, Session session, boolean isVideo, String playlistTitle) {
+        advancedDownloadExecutor.submit(() -> runAdvancedDownloadFlow(downloadId, youtubeUrl, formatId, destinationPath, isNetfree, session, isVideo, playlistTitle));
+    }
+
+    private static void runAdvancedDownloadFlow(String downloadId, String youtubeUrl, String formatId, String destinationPath, boolean isNetfree, Session session, boolean isVideo, String playlistTitle) {
+        AdvancedContext ctx = new AdvancedContext();
+        advancedDownloadsMap.put(downloadId, ctx);
+        Path tempDir = Paths.get(System.getProperty("user.home"), "Downloads", ".NFDownloader_Adv_" + downloadId);
+        ctx.tempDir = tempDir;
+        if (playlistTitle != null && !playlistTitle.trim().isEmpty()) {
+            Path base = (destinationPath != null && !destinationPath.isEmpty()) ? Paths.get(destinationPath) : Paths.get(System.getProperty("user.home"), "Downloads");
+            String safeTitle = playlistTitle.replaceAll("[\\\\/:*?\"<>|]", "_");
+            destinationPath = base.resolve("Playlist - " + safeTitle).toString();
+        }
+
+        try {
+            Files.createDirectories(tempDir);
+
+            if (App.isYtDlpUpdating) {
+                int waitCounter = 0;
+                while (App.isYtDlpUpdating && waitCounter < 120 && !ctx.cancellationRequested.get()) {
+                    Thread.sleep(500);
+                    waitCounter++;
+                }
+            }
+
+            if (ctx.cancellationRequested.get() && !ctx.pauseRequested.get()) {
+                return;
+            }
+
+            String proxyUrl = isNetfree ? "http://8.8.8.8:80" : null;
+            DownloadResult result = performAdvancedDownloadAttempt(ctx, downloadId, youtubeUrl, formatId, tempDir, proxyUrl, session, isVideo);
+
+            if (isNetfree && !result.isSuccess() && !ctx.cancellationRequested.get() && !result.getErrorMessage().contains("Requested format is not available")) {
+                proxyUrl = "http://1.1.1.1:80";
+                result = performAdvancedDownloadAttempt(ctx, downloadId, youtubeUrl, formatId, tempDir, proxyUrl, session, isVideo);
+            }
+
+            if (ctx.pauseRequested.get()) {
+                logger.info("Advanced download {} paused.", downloadId);
+                return;
+            }
+
+            if (ctx.cancellationRequested.get()) {
+                sendAdvancedMessage(session, DownloadMessage.cancelled(), downloadId);
+            } else if (result.isSuccess()) {
+                moveFinalFiles(tempDir, destinationPath);
+                Path finalDest = (destinationPath != null && !destinationPath.isEmpty()) ? Paths.get(destinationPath) : Paths.get(System.getProperty("user.home"), "Downloads");
+                sendAdvancedMessage(session, DownloadMessage.success(finalDest.toString()), downloadId);
+            } else {
+                sendAdvancedMessage(session, DownloadMessage.error(result.getErrorMessage()), downloadId);
+            }
+        } catch (Exception e) {
+            logger.error("Advanced download flow error", e);
+            sendAdvancedMessage(session, DownloadMessage.error("Critical error in advanced download"), downloadId);
+        } finally {
+            advancedDownloadsMap.remove(downloadId);
+
+            if (!ctx.pauseRequested.get()) {
+                deleteDirectoryRecursively(tempDir);
+            }
+        }
+    }
+
+    private static DownloadResult performAdvancedDownloadAttempt(AdvancedContext ctx, String downloadId, String youtubeUrl, String formatId, Path tempDir, String proxyUrl, Session session, boolean isVideo) {
+
+        List<String> command = buildDownloadCommand(youtubeUrl, false, formatId, tempDir, proxyUrl);
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        try {
+            Process process = processBuilder.start();
+            ctx.process = process;
+
+            StringBuilder errorOutput = new StringBuilder();
+            AtomicReference<String> finalFileName = new AtomicReference<>();
+            AtomicBoolean isNetfreeBlocked = new AtomicBoolean(false);
+
+            StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), line -> {
+                if (line.startsWith("[debug] ")) {
+                    return;
+                }
+
+                if (line.startsWith("MPS_METADATA:")) {
+                    try {
+                        String data = line.substring("MPS_METADATA:".length());
+                        int splitIndex = data.lastIndexOf("|");
+                        if (splitIndex != -1) {
+                            String title = data.substring(0, splitIndex).trim();
+                            String thumbnail = data.substring(splitIndex + 1).trim();
+                            sendAdvancedMessage(session, DownloadMessage.metadata(title, thumbnail), downloadId);
+                        }
+                    } catch (Exception e) {
+                    }
+                    return;
+                }
+
+                Matcher destinationMatcher = destinationFilePattern.matcher(line);
+                if (destinationMatcher.find()) {
+                    finalFileName.set(Paths.get(destinationMatcher.group(1).trim()).getFileName().toString());
+                }
+
+                Matcher progressMatcher = progressPattern.matcher(line);
+                if (progressMatcher.find()) {
+                    sendAdvancedMessage(session, DownloadMessage.progress(progressMatcher.group(1), progressMatcher.group(2).trim()), downloadId);
+                }
+
+                if (line.contains("[Merger] Merging formats")) {
+                    sendAdvancedMessage(session, DownloadMessage.merging(), downloadId); 
+                }else if (line.startsWith("[ExtractAudio]") || line.startsWith("[ffmpeg]") || line.startsWith("[Metadata]") || line.startsWith("[ThumbnailsConvertor]")) {
+                    sendAdvancedMessage(session, DownloadMessage.processing(), downloadId);
+                }
+            });
+
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), line -> {
+                if (line.startsWith("[debug] ")) {
+                    return;
+                }
+                boolean isErrorLine = line.contains("ERROR:") || line.contains("WARNING:") || line.contains("NetFree") || line.contains("418") || line.contains("Permission denied");
+                if (isErrorLine) {
+                    errorOutput.append(line).append("\n");
+                    logger.error("Adv-Error [{}]: {}", downloadId, line);
+                }
+
+                if (line.contains("[Merger]")) {
+                    sendAdvancedMessage(session, DownloadMessage.merging(), downloadId); 
+                }else if (line.startsWith("[ExtractAudio]") || line.startsWith("[ffmpeg]") || line.startsWith("[Metadata]")) {
+                    sendAdvancedMessage(session, DownloadMessage.processing(), downloadId);
+                }
+
+                if (line.contains("418") || (line.contains("NetFree") && line.contains("Blocked"))) {
+                    isNetfreeBlocked.set(true);
+                }
+            });
+
+            ExecutorService gobblerExecutor = Executors.newFixedThreadPool(2);
+            gobblerExecutor.submit(outputGobbler);
+            gobblerExecutor.submit(errorGobbler);
+
+            int exitCode = process.waitFor();
+            gobblerExecutor.shutdown();
+
+            if (ctx.cancellationRequested.get()) {
+                return new DownloadResult(false, "Cancelled", null);
+            }
+            if (isNetfreeBlocked.get()) {
+                return new DownloadResult(false, "Blocked by NetFree", null);
+            }
+            if (exitCode == 0) {
+                return new DownloadResult(true, null, finalFileName.get());
+            }
+
+            return new DownloadResult(false, errorOutput.toString(), null);
+
+        } catch (Exception e) {
+            return new DownloadResult(false, e.getMessage(), null);
+        } finally {
+            ctx.process = null;
+        }
+    }
+
+    private static void sendAdvancedMessage(Session session, DownloadMessage message, String downloadId) {
+        message.setDownloadId(downloadId);
+        sendMessage(session, message);
+    }
+
+    private static class AdvancedContext {
+
+        volatile Process process = null;
+        final AtomicBoolean cancellationRequested = new AtomicBoolean(false);
+        final AtomicBoolean pauseRequested = new AtomicBoolean(false);
+        Path tempDir = null;
     }
 
     private static class StreamGobbler implements Runnable {

@@ -16,6 +16,10 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -39,10 +43,12 @@ public class App {
 
     private static final int PORT = 9595;
     private static final String APP_NAME = "NFmp3Downloader";
-    private static final String CURRENT_VERSION = "2.2.1";
+    private static final String CURRENT_VERSION = "3.0.0";
     private static final String GITHUB_API_URL = "https://api.github.com/repos/mps435/NFmp3Downloader/releases/latest";
     private static Logger logger;
     private static final ConcurrentHashMap<String, Session> activeSessions = new ConcurrentHashMap<>();
+    private static final ScheduledExecutorService shutdownScheduler = Executors.newSingleThreadScheduledExecutor();
+    private static ScheduledFuture<?> shutdownTask = null;
     private static final ObjectMapper objectMapper = new ObjectMapper();
     public static volatile boolean isYtDlpUpdating = false;
 
@@ -137,11 +143,18 @@ public class App {
 
         logger.info("{} starting...", APP_NAME);
 
-        Javalin app = Javalin.create(config -> {
-            config.jetty.wsFactoryConfig(factory -> {
-                factory.setIdleTimeout(Duration.ofHours(1));
-            });
-        }).start(PORT);
+        Javalin app;
+        try {
+            app = Javalin.create(config -> {
+                config.jetty.wsFactoryConfig(factory -> {
+                    factory.setIdleTimeout(Duration.ofHours(1));
+                });
+            }).start(PORT);
+        } catch (Exception e) {
+            logger.warn("Server failed to start (Port {} may be in use). Assuming another instance is already running. Exiting gracefully.", PORT);
+            System.exit(0);
+            return;
+        }
 
         app.get("/local-image", ctx -> {
             try {
@@ -164,14 +177,11 @@ public class App {
                                 mimeType = "image/webp";
                             } else {
                                 mimeType = "image/jpeg";
-
                             }
                         }
 
                         ctx.contentType(mimeType);
-
                         ctx.header("Cache-Control", "no-store, no-cache, must-revalidate");
-
                         ctx.result(Files.newInputStream(path));
                     } else {
                         logger.error("File not found or not readable: {}", path);
@@ -185,24 +195,35 @@ public class App {
                 ctx.status(500).result("Server Error");
             }
         });
+
         logger.info("Server listening for WebSocket connections on port {}", PORT);
 
         app.ws("/ws", ws -> {
             ws.onConnect(ctx -> {
                 logger.info("WebSocket client connected: {}", ctx.getSessionId());
                 activeSessions.put(ctx.getSessionId(), ctx.session);
+                if (shutdownTask != null && !shutdownTask.isDone()) {
+                    shutdownTask.cancel(false);
+                    logger.info("Shutdown aborted: A client reconnected (likely page refresh).");
+                }
+
                 checkForUpdatesInBackground(ctx.session);
             });
 
             ws.onClose(ctx -> {
                 logger.info("WebSocket client disconnected: {}", ctx.getSessionId());
                 activeSessions.remove(ctx.getSessionId());
+
                 if (activeSessions.isEmpty()) {
-                    logger.info("All WebSocket clients disconnected. Shutting down application gracefully.");
+                    logger.info("All clients disconnected. Waiting 3 seconds before shutdown to allow for page refresh...");
 
-                    app.stop();
-
-                    System.exit(0);
+                    shutdownTask = shutdownScheduler.schedule(() -> {
+                        if (activeSessions.isEmpty()) {
+                            logger.info("No reconnect within grace period. Shutting down application gracefully.");
+                            app.stop();
+                            System.exit(0);
+                        }
+                    }, 3, TimeUnit.SECONDS);
                 }
             });
 
@@ -211,20 +232,23 @@ public class App {
                     String message = ctx.message();
                     JsonNode jsonNode = objectMapper.readTree(message);
                     String type = jsonNode.get("type").asText();
-                    String destinationPath = jsonNode.has("destinationPath")
-                            ? jsonNode.get("destinationPath").asText(null)
-                            : null;
+                    String destinationPath = jsonNode.has("destinationPath") ? jsonNode.get("destinationPath").asText(null) : null;
                     boolean isNetfree = jsonNode.has("isNetfreeUser") && jsonNode.get("isNetfreeUser").asBoolean(false);
+                    String downloadId = jsonNode.has("downloadId") ? jsonNode.get("downloadId").asText(null) : null;
 
                     if ("select_destination".equals(type)) {
-                        String dialogTitle = jsonNode.has("title")
-                                ? jsonNode.get("title").asText("Select download folder")
-                                : "Select download folder";
-                        logger.info("Client requested to select a destination folder with title: '{}'", dialogTitle);
+                        String dialogTitle = jsonNode.has("title") ? jsonNode.get("title").asText("Select download folder") : "Select download folder";
                         handleSelectDestination(ctx.session, dialogTitle);
+
                     } else if ("cancel_download".equals(type)) {
-                        logger.info("Client requested to cancel the download.");
                         DownloadService.cancelCurrentDownload();
+
+                    } else if ("cancel_download_advanced".equals(type)) {
+                        DownloadService.cancelAdvancedDownload(downloadId);
+
+                    } else if ("pause_download_advanced".equals(type)) {
+                        DownloadService.pauseAdvancedDownload(downloadId);
+
                     } else if ("download_queue".equals(type)) {
                         List<String> urls = objectMapper.convertValue(jsonNode.get("urls"), new TypeReference<>() {
                         });
@@ -232,15 +256,10 @@ public class App {
                         String playlistTitle = jsonNode.has("playlistTitle") ? jsonNode.get("playlistTitle").asText(null) : null;
                         String language = jsonNode.has("language") ? jsonNode.get("language").asText("en") : "en";
 
-                        logger.info("Received download queue request with {} URLs.", urls.size());
                         if (urls.size() == 1) {
-                            logger.info("Only 1 video selected from playlist. Switching to Single Download mode.");
                             String singleUrl = urls.get(0);
-
                             DownloadService.startDownload(singleUrl, false, formatId, destinationPath, isNetfree, ctx.session);
                         } else {
-
-                            logger.info("Multiple videos selected. Starting Queue mode for playlist: {}", playlistTitle);
                             DownloadService.startDownloadQueue(urls, formatId, destinationPath, isNetfree, ctx.session, playlistTitle, language);
                         }
 
@@ -249,33 +268,93 @@ public class App {
                         getPlaylistDetailsFromGas(youtubeUrl, ctx.session);
 
                     } else if ("download".equals(type) || "download_video".equals(type)) {
-
                         String youtubeUrl = jsonNode.get("url").asText();
                         String formatId = jsonNode.has("formatId") ? jsonNode.get("formatId").asText(null) : null;
-                        DownloadService.startDownload(youtubeUrl, false, formatId, destinationPath, isNetfree,
-                                ctx.session);
+                        DownloadService.startDownload(youtubeUrl, false, formatId, destinationPath, isNetfree, ctx.session);
+
+                    } else if ("download_advanced".equals(type) || "download_video_advanced".equals(type)) {
+                        String youtubeUrl = jsonNode.get("url").asText();
+                        String formatId = jsonNode.has("formatId") ? jsonNode.get("formatId").asText(null) : null;
+                        boolean isVideo = "download_video_advanced".equals(type);
+                        String playlistTitle = jsonNode.has("playlistTitle") ? jsonNode.get("playlistTitle").asText(null) : null;
+
+                        DownloadService.startAdvancedDownload(downloadId, youtubeUrl, formatId, destinationPath, isNetfree, ctx.session, isVideo, playlistTitle);
+
                     } else if ("select_background_image".equals(type)) {
                         new Thread(() -> {
                             String path = NativeFolderDialog.chooseFile("Select Background Image");
-
                             String pathJsonValue = (path == null) ? "null" : "\"" + path.replace("\\", "\\\\") + "\"";
                             String json = "{\"type\": \"background_selected\", \"path\": " + pathJsonValue + "}";
-
                             try {
                                 ctx.session.getRemote().sendString(json);
                             } catch (Exception e) {
                                 logger.error("Failed to send bg path", e);
                             }
                         }).start();
-                    } else if ("open_log".equals(type)) {
-                        logger.info("Client requested to open log file.");
-                        openLogFile();
-                    }
 
+                    } else if ("open_log".equals(type)) {
+                        openLogFile();
+
+                    } else if ("open_folder".equals(type)) {
+                        String folderPath = jsonNode.has("path") ? jsonNode.get("path").asText() : null;
+                        if (folderPath != null) {
+                            new Thread(() -> {
+                                logger.info("Action triggered: Requesting to open folder -> {}", folderPath);
+                                try {
+                                    Path pathToOpen = Paths.get(folderPath);
+                                    if ("Downloads".equalsIgnoreCase(folderPath.trim())) {
+                                        pathToOpen = Paths.get(System.getProperty("user.home"), "Downloads");
+                                    }
+
+                                    java.io.File dir = pathToOpen.toFile();
+                                    if (!dir.exists()) {
+                                        logger.warn("Folder does not exist, aborting open action: {}", dir.getAbsolutePath());
+                                        return;
+                                    }
+
+                                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                                        StringBuilder sb = new StringBuilder();
+                                        sb.append("Add-Type -AssemblyName System.Windows.Forms; ");
+                                        sb.append("$form = New-Object System.Windows.Forms.Form; ");
+                                        sb.append("$form.Opacity = 0; ");
+                                        sb.append("$form.ShowInTaskbar = $false; ");
+                                        sb.append("$form.TopMost = $true; ");
+                                        sb.append("$form.Show(); ");
+                                        sb.append("$form.Activate(); ");
+                                        sb.append("[System.Windows.Forms.Application]::DoEvents(); ");
+                                        sb.append("try { [System.Windows.Forms.SendKeys]::SendWait('%'); } catch {} ");
+                                        sb.append("Start-Sleep -Milliseconds 50; ");
+                                        String safePath = dir.getAbsolutePath().replace("'", "''");
+                                        sb.append("$path = '").append(safePath).append("'; ");
+                                        sb.append("Start-Process 'explorer.exe' -ArgumentList '/n,', \"`\"$path`\"\"; ");
+                                        sb.append("Start-Sleep -Milliseconds 1000; ");
+                                        sb.append("$form.Dispose(); ");
+                                        byte[] scriptBytes = sb.toString().getBytes(StandardCharsets.UTF_16LE);
+                                        String encodedScript = java.util.Base64.getEncoder().encodeToString(scriptBytes);
+                                        ProcessBuilder pb = new ProcessBuilder(
+                                                "powershell.exe", "-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-EncodedCommand", encodedScript
+                                        );
+                                        pb.start();
+                                        logger.info("Successfully launched Windows Explorer via PowerShell (forced to foreground).");
+
+                                    } else {
+
+                                        if (java.awt.Desktop.isDesktopSupported() && java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.OPEN)) {
+                                            java.awt.Desktop.getDesktop().open(dir);
+                                            logger.info("Successfully opened folder using Desktop API.");
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    logger.error("CRITICAL: Failed to open folder: " + folderPath, e);
+                                }
+                            }).start();
+                        }
+                    }
                 } catch (IOException e) {
                     logger.error("Error processing WebSocket message", e);
                 }
             });
+
             ws.onError(ctx -> {
                 logger.error("WebSocket error for client {}:", ctx.getSessionId(), ctx.error());
             });

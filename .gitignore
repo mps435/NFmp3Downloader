@@ -1,0 +1,25 @@
+# --- Maven Build Artifacts ---
+/target/
+dependency-reduced-pom.xml
+
+# --- jpackage & Installers ---
+/release/
+/Output/
+
+# --- IDEs and Editor Files ---
+# IntelliJ IDEA
+.idea/
+*.iml
+# VS Code
+.vscode/
+# Eclipse
+.settings/
+.classpath
+.project
+
+# --- OS Specific ---
+Thumbs.db
+.DS_Store
+
+# --- Logs ---
+*.log

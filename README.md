@@ -17,6 +17,7 @@ This project is specifically designed with features to ensure smooth operation f
     - Bypasses certificate validation (`--no-check-certificates`) to work seamlessly with NetFree's filtering.
     - **Fallback Metadata:** Intelligently fetches video titles and thumbnails safely even if the main download is initially blocked.
     - Automatic background self-update mechanism for `yt-dlp` to resolve common format errors without manual intervention.
+    - **Chrome/Edge plugin**  A browser extension that adds a download button to YouTube
 
 ## Installation and Usage
 

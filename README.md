@@ -4,7 +4,7 @@ A fast, modern desktop application for downloading YouTube videos as MP3 or MP4 
 
 This project is specifically designed with features to ensure smooth operation for **NetFree** users.
 
-## 🚀 Key Features (Updated for v3.0.0)
+## 🚀 Key Features (Updated for v3.0.1)
 
 - **Advanced Download Mode:** Download multiple files in parallel. Features a sleek UI with individual progress bars, pause/resume, and retry capabilities.
 - **Smart Local History:** View your recently downloaded files with their original YouTube thumbnails. Powered by IndexedDB for lightning-fast loading and privacy.
@@ -66,7 +66,7 @@ If you want to build the project yourself, follow these steps.
     Use `jpackage` to bundle the JAR with a minimal Java runtime. This creates a directory (`release\NFmp3Downloader`) containing an `.exe` and all necessary files, making the application independent of any installed Java on the user's machine. Run the following command from the project's root directory:
     
     ```bash
-    jpackage --type app-image --dest release --input target --name NFmp3Downloader --main-class com.mps.App --main-jar NFmp3Downloader-3.0.0.jar --java-options "-Dfile.encoding=UTF-8" --icon icon.ico --app-version 3.0.0 --vendor "mps" --copyright "Copyright (c) 2026 mps"
+    jpackage --type app-image --dest release --input target --name NFmp3Downloader --main-class com.mps.App --main-jar NFmp3Downloader-3.0.1.jar --java-options "-Dfile.encoding=UTF-8" --icon icon.ico --app-version 3.0.1 --vendor "mps" --copyright "Copyright (c) 2026 mps"
     ```
 
 5.  **(Optional) Build the Windows Installer:**

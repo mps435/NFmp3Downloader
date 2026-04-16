@@ -1,0 +1,10 @@
+{
+  "minVersion": 0.1,
+  "selectors":[
+    "ytd-watch-metadata ytd-menu-renderer #top-level-buttons-computed",
+    "ytd-watch-metadata ytd-menu-renderer #flexible-item-buttons",
+    "ytd-playlist-header-renderer ytd-menu-renderer #top-level-buttons-computed",
+    "ytd-playlist-header-renderer ytd-menu-renderer #flexible-item-buttons",
+    "ytd-menu-renderer #top-level-buttons-computed"
+  ]
+}

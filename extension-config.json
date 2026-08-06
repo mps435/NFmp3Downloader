@@ -1,5 +1,5 @@
 {
-  "minVersion": 0.1,
+  "minVersion": 0.2,
   "selectors":[
     "ytd-watch-metadata ytd-menu-renderer #top-level-buttons-computed",
     "ytd-watch-metadata ytd-menu-renderer #flexible-item-buttons",
